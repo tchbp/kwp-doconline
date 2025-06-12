@@ -1,0 +1,12 @@
+import App2 from "./App2";
+import { LoginProvider } from "./LoginProvider";
+
+const App = () => {
+  return (
+    <LoginProvider>
+      <App2 />
+    </LoginProvider>
+  );
+};
+
+export default App;
