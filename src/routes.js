@@ -7,6 +7,7 @@ import ListDocument from "./pages/ListDocument";
 //import Tasks from "./pages/Tasks";
 //import Settings from "./pages/Settings";
 import Home from "./pages/Home";
+import TabsSaraban from "./pages/TabsSaraban";
 
 export const routes = [
   {
@@ -44,6 +45,11 @@ export const routes = [
     title: "ไฟล์คำสั่ง",
     url: "/listdocument",
     component: ListDocument,
+  },
+  {
+    title: "สารบรรณ",
+    url: "/saraban",
+    component: TabsSaraban,
   },
   {
     title: "บันทึกการสอน",

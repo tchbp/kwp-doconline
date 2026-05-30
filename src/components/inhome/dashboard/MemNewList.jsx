@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Card, Flex, Tooltip, Button } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { Card, Flex } from "antd";
 import * as serveFns from "@/server/gas";
 import * as bdDate from "@/BuddhistDate";
 
@@ -13,7 +12,7 @@ const MemNewList = () => {
       .getDataNew5("tchmem")
       .then((data) => {
         console.log(data);
-        setDataDoc(JSON.parse(data));
+        setDataDoc(JSON.parse(data).reverse());
       })
       .catch((error) => {
         console.error(error);

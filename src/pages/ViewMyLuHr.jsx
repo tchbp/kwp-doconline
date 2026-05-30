@@ -122,7 +122,7 @@ const ViewMyLuHr = () => {
           header: { padding: 25, backgroundColor: "#fffb8f" },
         }}
       >
-        <Space direction="vertical" size="middle">
+        <Space orientation="vertical" size="middle">
           {showTab && (
             <Table
               columns={columns}

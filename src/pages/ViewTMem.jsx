@@ -134,9 +134,9 @@ const ViewTMem = () => {
           header: { padding: 25, backgroundColor: "#69b1ff" },
         }}
       >
-        <Space direction="vertical">
+        <Space orientation="vertical">
           <ConfigProvider locale={locale}>
-            <Space direction="vertical" size="middle">
+            <Space orientation="vertical" size="middle">
               <Form
                 form={form}
                 layout="inline"

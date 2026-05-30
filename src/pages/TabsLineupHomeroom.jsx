@@ -46,7 +46,7 @@ const TabsLineupHomeroom = () => {
       defaultActiveKey="1"
       items={items}
       onChange={onChange}
-      destroyInactiveTabPane={true}
+      destroyOnHidden={true}
     />
   );
 };

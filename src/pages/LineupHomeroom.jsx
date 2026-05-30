@@ -231,7 +231,7 @@ const LineupHomeroom = () => {
   return (
     <>
       <Spin2Wait onSpin={onSpin.spin} message={onSpin.message} />
-      <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+      <Space orientation="vertical" size="middle" style={{ display: "flex" }}>
         <Card
           title={`บันทึกเข้าแถว/โฮมรูม ชั้น ${contexObj.dataLogin.advice}`}
           hoverable

@@ -4,7 +4,7 @@ const getSheetData = (name) => {
   const data = dataRange.getDisplayValues();
   const heads = data.shift();
   const obj = data.map((r) =>
-    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {})
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
   );
   return JSON.stringify(obj);
 };
@@ -22,14 +22,14 @@ const getDataNew5 = (name) => {
         sheet.getLastRow() - 4,
         1,
         5,
-        sheet.getLastColumn()
+        sheet.getLastColumn(),
       );
     } else {
       dataRange = sheet.getRange(
         2,
         1,
         sheet.getLastRow() - 1,
-        sheet.getLastColumn()
+        sheet.getLastColumn(),
       );
     }
     objData = dataRange
@@ -84,7 +84,7 @@ const sendFile = (file, data) => {
 
   const contentType = file.substring(5, file.indexOf(";"));
   const bytes = Utilities.base64Decode(
-    file.substr(file.indexOf("base64,") + 7)
+    file.substr(file.indexOf("base64,") + 7),
   );
   const blob = Utilities.newBlob(bytes, contentType, filename);
 
@@ -106,7 +106,7 @@ const sendFileCommand = (file, data) => {
 
   const contentType = file.substring(5, file.indexOf(";"));
   const bytes = Utilities.base64Decode(
-    file.substr(file.indexOf("base64,") + 7)
+    file.substr(file.indexOf("base64,") + 7),
   );
   const blob = Utilities.newBlob(bytes, contentType, filename);
 
@@ -133,7 +133,7 @@ const sendFileCommand = (file, data) => {
   const dataNew = dataRange.getDisplayValues();
   const heads = dataNew.shift();
   const obj = dataNew.map((r) =>
-    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {})
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
   );
   return JSON.stringify(obj);
 };
@@ -159,7 +159,7 @@ const delDocCommand = (nocmd) => {
   const dataNew = dataRange.getDisplayValues();
   const heads = dataNew.shift();
   const obj = dataNew.map((r) =>
-    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {})
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
   );
   return JSON.stringify(obj);
 };
@@ -242,7 +242,16 @@ const chPasswd = (objData) => {
   }
   return isChange;
 };
-
+const getSubj4Teach = (objData) => {
+  const { user, all } = objData;
+  const objSubj = JSON.parse(getSheetData("subj4usr"));
+  let subj4Teach = objSubj;
+  if (!all) {
+    subj4Teach = objSubj.filter((subj) => subj.user === user);
+  }
+  //Logger.log(JSON.stringify(objData));
+  return JSON.stringify(subj4Teach);
+};
 const std4Teach = (objData) => {
   const { user, tdate, tclass, tpr } = objData;
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("tchmem");
@@ -308,6 +317,7 @@ const putTeachMem = (objData) => {
     stdStatus,
     stdKad,
     stdLa,
+    t4usr,
   } = objData;
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("tchmem");
 
@@ -337,6 +347,7 @@ const putTeachMem = (objData) => {
     stdKad.toString(),
     stdLa.toString(),
     new Date(),
+    t4usr || "",
   ];
   sheet
     .getRange(sheet.getLastRow() + 1, 1, 1, arr2Mem.length)
@@ -415,7 +426,7 @@ const getTeachMem = (objData) => {
         atc: "",
         memo: "",
         stdabs: "",
-      })
+      }),
   );
   //Logger.log("tMemFound-0 \n" + JSON.stringify(tMemFound));
 
@@ -516,10 +527,14 @@ const getStdAbs = (objData) => {
 
   Object.keys(chked).map((pr) => {
     chked[pr].kad.map((std) => {
-      objStd[std][pr] = "ขาด";
+      if (objStd[std]) {
+        objStd[std][pr] = "ขาด";
+      } //เพิ่ม if ป้องกัน error เมื่อลบนักเรียนออกจาก class แล้วข้อมูลยังอยู่ใน tchmem
     });
     chked[pr].la.map((std) => {
-      objStd[std][pr] = "ลา";
+      if (objStd[std]) {
+        objStd[std][pr] = "ลา";
+      } //เพิ่ม if ป้องกัน error เมื่อลบนักเรียนออกจาก class แล้วข้อมูลยังอยู่ใน tchmem
     });
   });
 
@@ -548,7 +563,7 @@ const getHomeroom = (objData) => {
         kad: "",
         la: "",
         tMem: "",
-      })
+      }),
   );
 
   const refSearch = `${tdate}`;
@@ -610,10 +625,14 @@ const getStdHomeroom = (objData) => {
     const arrLa = memData[9] !== "" ? memData[9].split(",") : [];
 
     arrKad.map((std) => {
-      objStd[std].act = "ขาด";
+      if (objStd[std]) {
+        objStd[std].act = "ขาด";
+      } //เพิ่ม if ป้องกัน error เมื่อลบนักเรียนออกจาก class แล้วข้อมูลยังอยู่ใน lineuphomerrom
     });
     arrLa.map((std) => {
-      objStd[std].act = "ลา";
+      if (objStd[std]) {
+        objStd[std].act = "ลา";
+      } //เพิ่ม if ป้องกัน error เมื่อลบนักเรียนออกจาก class แล้วข้อมูลยังอยู่ใน lineuphomerrom
     });
     objResult = Object.keys(objStd).map((std) => {
       return objStd[std];
@@ -656,3 +675,405 @@ const testGetTMem = () => {
   const result = getStdHomeroom(objData);
   Logger.log(result);
 };
+
+const getTypeJob = () => {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("joblist");
+  const dataRang = sheet.getRange(1, 1, sheet.getLastRow(), 4);
+  const dataNew = dataRang.getDisplayValues();
+  const heads = dataNew.shift();
+  const arrJob = dataNew.map((r) =>
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+  );
+
+  //Logger.log(arrJob);
+
+  return JSON.stringify(arrJob);
+};
+const sendFileJob = (file, data) => {
+  const { user, typeJob, memo, filename } = data;
+  const folderId = "1abAYK7eFMA11A4zFc6fWG3dliPbJAc97";
+
+  const folder = DriveApp.getFolderById(folderId);
+
+  const contentType = file.substring(5, file.indexOf(";"));
+  const bytes = Utilities.base64Decode(
+    file.substr(file.indexOf("base64,") + 7),
+  );
+  const blob = Utilities.newBlob(
+    bytes,
+    contentType,
+    `${user}-${typeJob}-${filename}`,
+  );
+
+  const upFile = folder.createFile(blob);
+  const upFileId = upFile.getId();
+  const upFileUrl = upFile.getUrl();
+
+  const data2Rec = [
+    user,
+    typeJob,
+    memo,
+    upFileId,
+    upFileUrl,
+    "รอตรวจ",
+    new Date(),
+  ];
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("jobdb");
+  const row2Up = sheet.getLastRow() + 1;
+  sheet.getRange(row2Up, 1, 1, data2Rec.length).setValues([data2Rec]);
+
+  const dataRange = sheet.getDataRange();
+  const dataNew = dataRange.getDisplayValues();
+  const heads = dataNew.shift();
+  const obj = dataNew.map((r) =>
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+  );
+  return JSON.stringify(obj.filter((job) => job.user === user));
+};
+const getSheetDataJob = (user) => {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("jobdb");
+
+  let obj = [];
+  if (sheet.getLastRow() > 1) {
+    const dataRange = sheet.getDataRange();
+    const dataNew = dataRange.getDisplayValues();
+    const heads = dataNew.shift();
+    obj = dataNew.map((r) =>
+      heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+    );
+  }
+  if (user) {
+    return JSON.stringify(obj.filter((job) => job.user === user));
+  }
+  return JSON.stringify(obj);
+};
+const delDocJob = (user, fileid) => {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("jobdb");
+  const foundDoc = sheet
+    .getRange(2, 4, sheet.getLastRow() - 1)
+    .createTextFinder(fileid)
+    .matchCase(true)
+    .matchEntireCell(true)
+    .findNext();
+
+  if (foundDoc) {
+    const docRow = foundDoc.getRow();
+    const docId = sheet.getRange(docRow, 4).getValue();
+
+    sheet.deleteRow(docRow);
+    const docJob = DriveApp.getFileById(docId);
+    docJob.setTrashed(true);
+  }
+  const dataRange = sheet.getDataRange();
+  const dataNew = dataRange.getDisplayValues();
+  const heads = dataNew.shift();
+  const obj = dataNew.map((r) =>
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+  );
+  return JSON.stringify(obj.filter((job) => job.user === user));
+};
+
+const getConst = (typeCons) => {
+  const sheet =
+    SpreadsheetApp.getActiveSpreadsheet().getSheetByName("constants");
+
+  const foundCons = sheet
+    .getRange(1, 1, sheet.getLastRow(), 1)
+    .createTextFinder(typeCons)
+    .matchCase(true)
+    .matchEntireCell(true)
+    .findNext();
+
+  const rowVal = foundCons.getRow() + 1;
+  const arrVal = sheet.getRange(rowVal, 1).getDataRegion().getValues();
+  arrVal.shift();
+  const heads = arrVal.shift();
+  const obj = arrVal.map((r) =>
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+  );
+
+  return JSON.stringify(obj);
+};
+const testgetcon = () => {
+  const typeCons = "wrokgroup";
+
+  Logger.log(getConst(typeCons));
+};
+
+const getTeacher = () => {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("user");
+  const dataRange = sheet.getDataRange();
+  const arrVal = dataRange.getValues();
+  arrVal.shift();
+  const obj = arrVal.map((val) => {
+    return { user: val[6], name: val[5], level: val[8].toString().split(",") };
+  });
+  // Logger.log(JSON.stringify(obj));
+  return JSON.stringify(obj);
+};
+
+const getJob2Inspect = (data) => {
+  const { level } = data;
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("jobdb");
+  let obj = [];
+  if (sheet.getLastRow() > 1) {
+    const dataRange = sheet.getDataRange();
+    const dataNew = dataRange.getDisplayValues();
+    const heads = dataNew.shift();
+    obj = dataNew.map((r) =>
+      heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+    );
+  }
+  let jobList = JSON.parse(getConst("joblist"));
+  if (!level.includes("1")) {
+    jobList = jobList.filter((job) => level.includes(job.inspec));
+    //Logger.log(jobList);
+    const typeJob = jobList.map((job) => job.job);
+    //Logger.log(`typejob : ${typeJob}`);
+    return JSON.stringify({
+      jobData: obj.filter((job) => typeJob.includes(job.typeJob)),
+      jobList: jobList,
+    });
+  } else {
+    return JSON.stringify({ jobData: obj, jobList: jobList });
+  }
+};
+const inspectJob = (data) => {
+  let { user, level, inspect, fileid } = data;
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("jobdb");
+  const foundDoc = sheet
+    .getRange(2, 4, sheet.getLastRow() - 1)
+    .createTextFinder(fileid)
+    .matchCase(true)
+    .matchEntireCell(true)
+    .findNext();
+  if (inspect === "ตรวจผ่าน" && level.includes("1")) {
+    inspect = "ส่งเรียบร้อย";
+  }
+  if (foundDoc) {
+    const row = foundDoc.getRow();
+    sheet.getRange(row, 6).setValue(inspect);
+    sheet.getRange(row, 8).setValue(user);
+    sheet.getRange(row, 9).setValue(new Date());
+  }
+  return getJob2Inspect({ level: level });
+};
+const saveComment = (data) => {
+  const { user, pos, comm, commD, fileid } = data;
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("jobdb");
+  const foundDoc = sheet
+    .getRange(2, 4, sheet.getLastRow() - 1)
+    .createTextFinder(fileid)
+    .matchCase(true)
+    .matchEntireCell(true)
+    .findNext();
+  if (foundDoc) {
+    const row = foundDoc.getRow();
+    sheet.getRange(row, 10).setValue(comm);
+    sheet.getRange(row, 11).setValue(commD);
+  }
+  return true;
+};
+const getSheetDataPP5 = (user = "all") => {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("pp5");
+  let obj = [];
+  if (sheet.getLastRow() > 1) {
+    const dataRange = sheet.getDataRange();
+    const dataNew = dataRange.getDisplayValues();
+    const heads = dataNew.shift();
+    obj = dataNew.map((r) =>
+      heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+    );
+  }
+  if (user !== "all") {
+    return JSON.stringify(obj.filter((pp) => pp.user === user));
+  }
+  return JSON.stringify(obj);
+};
+//
+const extractSheetId = (url) => {
+  const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return match ? match[1] : null;
+};
+const putPP5 = (data) => {
+  const { user, stdclass, subject, memo, fileurl } = data;
+  const arrTempPP5 = JSON.parse(getConst("templatepp5"));
+
+  try {
+    const sheetPP5 = SpreadsheetApp.openByUrl(fileurl);
+
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("pp5");
+    const fileid = sheetPP5.getId();
+    if (arrTempPP5.find((pp5) => pp5.fileid === fileid)) {
+      throw new Error("ไม่สามารถบันทึกไฟล์นี้ได้ เนื่องจากเป็นเทมเพลต");
+    }
+    const data2Rec = [
+      user,
+      stdclass,
+      subject,
+      memo,
+      fileurl,
+      fileid,
+      new Date(),
+    ];
+    sheet
+      .getRange(sheet.getLastRow() + 1, 1, 1, data2Rec.length)
+      .setValues([data2Rec]);
+
+    return getSheetDataPP5();
+  } catch (e) {
+    //throw new Error("ไม่สามารถเปิดไฟล์ได้ กรุณาตรวจสอบ URL");
+    Logger.log(`Error: ${e.message}`);
+  }
+};
+const delPP5 = (data) => {
+  const { fileid, user } = data;
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("pp5");
+  const foundDoc = sheet
+    .getRange(2, 6, sheet.getLastRow() - 1)
+    .createTextFinder(fileid)
+    .matchCase(true)
+    .matchEntireCell(true)
+    .findNext();
+
+  if (foundDoc) {
+    const docRow = foundDoc.getRow();
+    sheet.deleteRow(docRow);
+  }
+  return getSheetDataPP5();
+};
+//-------------------Saraban Section-------------------//
+const arrShName = [
+  "repbooks",
+  "sendbooks",
+  "innerbooks",
+  "cmdbooks",
+  "annobooks",
+];
+const arrSubfixBook = [
+  "หนังสือรับ",
+  "หนังสือส่ง",
+  "บันทึกข้อความ",
+  "คำสั่ง",
+  "ประกาศ",
+];
+
+const addNoBook = (user, type, cmdType, data) => {
+  const { id, at, atdate, from, to, title, action, note, fileid, fileurl } =
+    data;
+  //const arrShName = ["repbooks", "sendbooks", "cmdbooks", "annobooks"];
+  const data2Rec = [
+    id,
+    at,
+    atdate,
+    from,
+    to,
+    title,
+    action,
+    note,
+    fileid,
+    fileurl,
+    user,
+  ];
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
+    arrShName[type],
+  );
+  if (cmdType == "add") {
+    const row2Up = sheet.getLastRow() + 1;
+    // data2Rec[0] =
+    //   row2Up > 2 ? sheet.getRange(row2Up - 1, 1).getValue() + 1 || 1 : 1; //Auto gen id ป้องกันกรณี id ที่ส่งมาไม่ใช่เลขหรือซ้ำกับที่มีอยู่แล้วในชีที่ส่งต่อไป
+    sheet.getRange(row2Up, 1, 1, data2Rec.length).setValues([data2Rec]);
+  } else {
+    const foundBook = sheet
+      .getRange(2, 1, sheet.getLastRow() - 1)
+      .createTextFinder(id)
+      .matchCase(true)
+      .matchEntireCell(true)
+      .findNext();
+    if (foundBook) {
+      sheet
+        .getRange(foundBook.getRow(), 1, 1, data2Rec.length)
+        .setValues([data2Rec]);
+    }
+  }
+
+  const dataRange = sheet.getDataRange();
+  const dataNew = dataRange.getDisplayValues();
+  const heads = dataNew.shift();
+  const obj = dataNew.map((r) =>
+    heads.reduce((o, k, i) => ((o[k] = r[i] || ""), o), {}),
+  );
+  return JSON.stringify(obj);
+};
+const uploadFileBook = (file, data) => {
+  const { id, at, title, filename, bookType } = data;
+  //const arrShName = ["repbooks", "sendbooks", "cmdbooks", "annobooks"];
+  const arrFolderId = [
+    "1J3zQR-8XlXIr3rK80emq0aOZTK-Abkvc",
+    "1LUhCGg4QJC7DPtRm7mem2UfE1NOBrrcK",
+    "1dmN30-Hx0h5HYAKif3rbSrGH5IWfP5dM",
+    "1mohfKGkRB-dJHTMXmMH4Y1IaDOByoW0Y",
+    "1RngF1bIzf7zD38gI0LOt-mA01kOj_Mfk",
+  ];
+  const folderId = arrFolderId[bookType];
+
+  const folder = DriveApp.getFolderById(folderId);
+
+  const contentType = file.substring(5, file.indexOf(";"));
+  const bytes = Utilities.base64Decode(
+    file.substr(file.indexOf("base64,") + 7),
+  );
+  const blob = Utilities.newBlob(
+    bytes,
+    contentType,
+    arrSubfixBook[bookType] + "-" + title,
+  );
+
+  const upFile = folder.createFile(blob);
+  const upFileId = upFile.getId();
+  const upFileUrl = upFile.getUrl();
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
+    arrShName[bookType],
+  );
+  const foundBook = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1)
+    .createTextFinder(id)
+    .matchCase(true)
+    .matchEntireCell(true)
+    .findNext();
+  if (foundBook) {
+    const bookRow = foundBook.getRow();
+    sheet.getRange(bookRow, 9).setValue(upFileId);
+    sheet.getRange(bookRow, 10).setValue(upFileUrl);
+    return JSON.stringify({ upFileId, upFileUrl });
+  } else {
+    throw new Error("ไม่พบข้อมูลหนังสือที่ต้องการอัปโหลดไฟล์");
+  }
+};
+const delBook = (bookType, id) => {
+  //const arrShName = ["repbooks", "sendbooks", "cmdbooks", "annobooks"];
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
+    arrShName[bookType],
+  );
+  const foundBook = sheet
+    .getRange(2, 1, sheet.getLastRow() - 1)
+    .createTextFinder(id)
+    .matchCase(true)
+    .matchEntireCell(true)
+    .findNext();
+  if (foundBook) {
+    const bookRow = foundBook.getRow();
+    const fileId = sheet.getRange(bookRow, 9).getValue();
+    if (fileId) {
+      const file = DriveApp.getFileById(fileId);
+      file.setTrashed(true);
+    }
+    sheet.deleteRow(bookRow);
+    return getSheetData(arrShName[bookType]);
+  } else {
+    throw new Error("ไม่พบข้อมูลหนังสือที่ต้องการอัปโหลดไฟล์");
+  }
+};
+//-------------------End Saraban Section--------------------

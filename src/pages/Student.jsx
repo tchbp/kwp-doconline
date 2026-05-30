@@ -128,8 +128,8 @@ const Student = () => {
           isLogin={(e) => setLogin(e)}
         />
       </Modal>
-      <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-        <Space direction="vertical" size="middle">
+      <Space orientation="vertical" size="middle" style={{ display: "flex" }}>
+        <Space orientation="vertical" size="middle">
           <Space.Compact>
             <Input
               onChange={(e) => {

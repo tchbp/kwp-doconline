@@ -135,9 +135,9 @@ const ViewHomeroom = () => {
           header: { padding: 25, backgroundColor: "#fff566" },
         }}
       >
-        <Space direction="vertical">
+        <Space orientation="vertical">
           <ConfigProvider locale={locale}>
-            <Space direction="vertical" size="middle">
+            <Space orientation="vertical" size="middle">
               <Form
                 form={form}
                 layout="inline"

@@ -15,55 +15,99 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   SearchOutlined,
+  UploadOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import UpCommand from "@/components/doccommand/UpCommand";
+import UpFileBook from "./UpFileBook";
+import FormAddBook from "./FormAddBook";
 import * as serveFns from "@/server/gas";
 import * as bdDate from "@/BuddhistDate";
-import Spin2Wait from "@/components/Spin2Wait";
+
 import LoginContext from "@/LoginProvider";
 
-const ListDocument = () => {
-  const [modalShow, setModalShow] = useState(false);
-  const [dataCommand, setDataCommand] = useState(null);
-  const [onSpin, setOnSpin] = useState(false);
+const TableBookList = ({
+  user,
+  bookType,
+  dataBookList,
+  setDataBookList,
+  setOnSpin,
+}) => {
   const [isOperator, setIsOperator] = useState(false);
   const { Title } = Typography;
 
   const contextObj = useContext(LoginContext);
   useEffect(() => {
     setIsOperator(contextObj.dataLogin.level.includes("1"));
-    isSpin(true);
-    serveFns
-      .getSheetData("doccommand")
-      .then((data) => {
-        setDataCommand(JSON.parse(data).reverse());
-        isSpin(false);
-        console.log(`onSpin is ${onSpin}`);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }, []);
+  //---------------Edit Function----------------
+  const handleEdit = (data) => {
+    const modal = Modal.info({
+      title: "แก้ไขข้อมูล " + data.at,
+      icon: <FileOutlined />,
+      content: (
+        <FormAddBook
+          cmdType={"edit"}
+          bookType={bookType}
+          user={user}
+          nextid={data.id}
+          data2Edit={data}
+          onClose={() => {
+            modal.destroy();
+          }}
+          setDataBookList={setDataBookList}
+        />
+      ),
+      width: 600,
+      footer: null,
+    });
+  };
+  //---------------End Edit Function----------------
+
+  //---------------UpFile Function----------------
+
+  const handleUpFile = (id, at, title) => {
+    const modal = Modal.info({
+      title: "อัพโหลดไฟล์เอกสาร " + at,
+      icon: <FileOutlined />,
+      content: (
+        <UpFileBook
+          bookType={bookType}
+          id={id}
+          at={at}
+          title={title}
+          onClose={() => {
+            modal.destroy();
+          }}
+          setDataBookList={setDataBookList}
+        />
+      ),
+      width: 600,
+      footer: null,
+    });
+  };
+
   //---------------Delete Function----------------
   const [modal, contextHolder] = Modal.useModal();
-  const delDocCommand = async (nocmd) => {
+  const delDocCommand = async (id, at) => {
     const confirmed = await modal.confirm({
       title: "ยืนยันลบไฟล์",
       icon: <ExclamationCircleOutlined />,
-      content: `ต้องการลบไฟล์คำสั่ง เลขที่ ${nocmd}`,
+      content: `ต้องการลบเอกสาร ที่ ${at}`,
     });
     if (confirmed) {
-      isSpin(true);
+      setOnSpin(true);
       serveFns
-        .delDocCommand(nocmd)
+        .delBook(bookType, id)
         .then((data) => {
-          setDataCommand(JSON.parse(data));
-          isSpin(false);
-          message(`ลบไฟล์คำสั่งเลขที่ ${nocmd} แล้ว`);
+          setDataBookList(JSON.parse(data).reverse());
+
+          message(`ลบเอกสาร ที่ ${at} แล้ว`);
+          setOnSpin(false);
         })
         .catch((error) => {
           console.log(error);
+          setOnSpin(false);
         });
     }
   };
@@ -174,10 +218,18 @@ const ListDocument = () => {
     Object.assign(
       {
         title: "เลขที่",
-        dataIndex: "nocmd",
-        key: "nocmd",
+        dataIndex: "id",
+        key: "id",
       },
-      getColumnSearchProps("nocmd", "เลขที่คำสั่ง")
+      getColumnSearchProps("id", "เลขที่"),
+    ),
+    Object.assign(
+      {
+        title: "ที่",
+        dataIndex: "at",
+        key: "at",
+      },
+      getColumnSearchProps("at", "ที่"),
     ),
     {
       title: "ลงวันที่",
@@ -186,6 +238,16 @@ const ListDocument = () => {
       render: (_, record) =>
         bdDate.DateShortTH(record.atdate.replace(/-/g, "/")),
     },
+    {
+      title: "จาก",
+      dataIndex: "from",
+      key: "from",
+    },
+    {
+      title: "ถึง",
+      dataIndex: "to",
+      key: "to",
+    },
     Object.assign(
       {
         title: "เรื่อง",
@@ -193,26 +255,26 @@ const ListDocument = () => {
         key: "title",
         width: "40%",
       },
-      getColumnSearchProps("title", "ชื่อเรื่อง")
+      getColumnSearchProps("title", "ชื่อเรื่อง"),
     ),
     {
-      title: "กลุ่มงานต้นเรื่อง",
-      dataIndex: "workgroup",
-      key: "workgroup",
+      title: "การปฏิบัติ",
+      dataIndex: "action",
+      key: "action",
       filters: [
         { text: "กลุ่มบริหารวิชาการ", value: "กลุ่มบริหารวิชาการ" },
         { text: "กลุ่มบริหารงานบุคคล", value: "กลุ่มบริหารงานบุคคล" },
         { text: "กลุ่มบริหารงบประมาณ", value: "กลุ่มบริหารงบประมาณ" },
         { text: "กลุ่มบริหารทั่วไป", value: "กลุ่มบริหารทั่วไป" },
       ],
-      onFilter: (value, record) => record.workgroup.includes(value),
+      onFilter: (value, record) => record.action.includes(value),
       // filtersSearch: true,
       // filterSearchPlaceholder: "ค้นหากลุ่มงาน",
     },
     {
-      title: "บันทึกเพิ่มเติม",
-      dataIndex: "memo",
-      key: "memo",
+      title: "หมายเหตุ",
+      dataIndex: "note",
+      key: "note",
     },
     {
       title: "ไฟล์",
@@ -221,27 +283,62 @@ const ListDocument = () => {
       render: (_, record) => (
         <>
           <Space.Compact>
-            <Tooltip title="เปิดไฟล์">
+            {(user == record.user || isOperator) && (
+              <Tooltip title="แก้ไขข้อมูล">
+                <Button
+                  onClick={() => {
+                    handleEdit({
+                      id: record.id,
+                      at: record.at,
+                      atdate: record.atdate,
+                      from: record.from,
+                      to: record.to,
+                      title: record.title,
+                      action: record.action,
+                      note: record.note,
+                      fileid: record.fileid,
+                      fileurl: record.fileurl,
+                      user: record.user,
+                    });
+                  }}
+                  variant="solid"
+                  color="green"
+                  icon={<EditOutlined />}
+                />
+              </Tooltip>
+            )}
+
+            <Tooltip title="อัพโหลดไฟล์">
               <Button
                 onClick={() => {
-                  window.open(record.fileurl, "_blank");
-                  console.log(record.fileurl);
+                  handleUpFile(record.id, record.at, record.title);
                 }}
                 variant="solid"
-                color="primary"
-              >
-                <FileOutlined />
-              </Button>
+                color="purple"
+                icon={<UploadOutlined />}
+              />
             </Tooltip>
+            {record.fileurl && (
+              <Tooltip title="เปิดไฟล์">
+                <Button
+                  onClick={() => {
+                    window.open(record.fileurl, "_blank");
+                    console.log(record.fileurl);
+                  }}
+                  variant="solid"
+                  color="primary"
+                  icon={<FileOutlined />} // ถ้าไม่มี icon ให้หยุดการทำงาน
+                />
+              </Tooltip>
+            )}
             {isOperator && (
               <Tooltip title="ลบไฟล์">
                 <Button
                   variant="solid"
                   color="danger"
-                  onClick={() => delDocCommand(record.nocmd)}
-                >
-                  <DeleteOutlined />
-                </Button>
+                  icon={<DeleteOutlined />}
+                  onClick={() => delDocCommand(record.id, record.at)}
+                />
               </Tooltip>
             )}
           </Space.Compact>
@@ -249,48 +346,14 @@ const ListDocument = () => {
       ),
     },
   ];
-  const showModalUpFile = () => {
-    setModalShow(true);
-  };
-  const hideModalUpFile = () => {
-    setModalShow(false);
-  };
-  const isSpin = (e) => {
-    setOnSpin(e);
-  };
+
   return (
     <>
-      <Space orientation="vertical">
-        <Title>เอกสาร Online ไฟล์คำสั่ง โรงเรียนกุมภวาปีพิทยาสรรค์</Title>
-        <Flex gap="middle" align="center" vertical>
-          <Modal
-            title="Up Load ไฟล์"
-            open={modalShow}
-            onCancel={hideModalUpFile}
-            footer={null}
-          >
-            <UpCommand
-              onHide={hideModalUpFile}
-              setDataCommand={setDataCommand}
-            />
-          </Modal>
-          <Space.Compact block>
-            <p>อัพโหลดไฟล์คำสั่ง</p>
-            <Tooltip title="เพิ่มไฟล์คำสั่ง">
-              <Button variant="success" onClick={showModalUpFile}>
-                คลิก UpLoad
-              </Button>
-            </Tooltip>
-          </Space.Compact>
-        </Flex>
-        <Space orientation="vertical" size="middle" style={{ display: "flex" }}>
-          <Table dataSource={dataCommand} columns={columns} />
-          <Spin2Wait onSpin={onSpin} message={"กำลังดึงข้อมูลโปรดรอซักครู่"} />
-        </Space>
-        {contextHolder}
-      </Space>
+      <Table dataSource={dataBookList} columns={columns} />
+
+      {contextHolder}
     </>
   );
 };
 
-export default ListDocument;
+export default TableBookList;

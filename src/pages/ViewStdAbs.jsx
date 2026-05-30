@@ -136,9 +136,9 @@ const ViewStdAbs = () => {
           header: { padding: 25, backgroundColor: "#bae0ff" },
         }}
       >
-        <Space direction="vertical">
+        <Space orientation="vertical">
           <ConfigProvider locale={locale}>
-            <Space direction="vertical" size="middle">
+            <Space orientation="vertical" size="middle">
               <Form
                 form={form}
                 layout="inline"

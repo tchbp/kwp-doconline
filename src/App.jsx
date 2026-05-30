@@ -8,10 +8,23 @@ import {
 } from "react-router-dom";
 import { useState, useContext } from "react";
 import { routes } from "@/routes";
+import {
+  Layout,
+  Menu,
+  theme,
+  Flex,
+  Typography,
+  Card,
+  Dropdown,
+  Tooltip,
+  Space,
+  Modal,
+} from "antd";
 import Home from "./pages/Home";
-import { Layout, Menu, theme, Flex, Typography, Card } from "antd";
-import LoginContext from "@/LoginProvider";
 
+import { UserOutlined } from "@ant-design/icons";
+import LoginContext from "@/LoginProvider";
+import ChangePassword from "@/components/doccommand/ChangePassword";
 const { Header, Content, Footer, Sider } = Layout;
 
 const App = () => {
@@ -24,6 +37,36 @@ const App = () => {
     key: String(index + 1),
     label: <Link to={route.url}>{route.title}</Link>,
   }));
+
+  const [chPasswdShow, setChPasswdShow] = useState(false);
+  const itemsMenu = [
+    {
+      label: "ลงชื่อออก",
+      key: "0",
+    },
+    {
+      label: "เปลี่ยนรหัสผ่าน",
+      key: "1",
+    },
+  ];
+  const logOut = () => {
+    let objTmp = {};
+    objTmp.isLogin = false;
+    contextObj.setLogin(objTmp);
+    //setCookie("ckLogin", objTmp);
+    //console.log(JSON.stringify(cookies));
+    setLogin(false);
+  };
+  const handleMenuClick = (e) => {
+    console.log("click", e.key);
+    switch (e.key) {
+      case "0":
+        logOut();
+        break;
+      case "1":
+        setChPasswdShow(true);
+    }
+  };
 
   return (
     <>
@@ -62,24 +105,56 @@ const App = () => {
                     },
                   }}
                 >
-                  <Flex justify="flex-start" align="center">
-                    <img
-                      src="https://drive.google.com/thumbnail?id=1xr1JK0Uapoa4cdLEQyFghfRm4DaiAA4Z"
-                      style={{ width: 100, display: "block" }}
-                      alt="logo"
-                    />
+                  <Flex vertical gap="small">
+                    <Flex justify="flex-start" align="center">
+                      <img
+                        src="https://drive.google.com/thumbnail?id=1fNqpPoT98B_9pjrZHbnPtcjzkVp6h8GA"
+                        style={{ width: 100, display: "block" }}
+                        alt="logo"
+                      />
 
-                    <Typography.Title level={3} style={{ padding: 30 }}>
-                      KWP Document Online
-                    </Typography.Title>
+                      <Typography.Title level={3} style={{ padding: 30 }}>
+                        KWP Document Online
+                      </Typography.Title>
+                    </Flex>
+                    <Flex
+                      justify="flex-end"
+                      align="flex-start"
+                      style={{
+                        height: "40px",
+                        backgroundColor: "#afdada",
+                        padding: 5,
+                        boxShadow:
+                          "0 0 8px 0 rgba(0, 0, 0, 0.2), 0 0 20px 0 rgba(0, 0, 0, 0.19)",
+                      }}
+                    >
+                      {contextObj.dataLogin.isLogin && (
+                        <Dropdown
+                          menu={{
+                            items: itemsMenu,
+                            onClick: handleMenuClick,
+                          }}
+                          trigger={["click"]}
+                        >
+                          <Tooltip title="คลิกเพื่อแสดงเมนู">
+                            <a>
+                              <Space>
+                                <UserOutlined />
+                                {contextObj.dataLogin.name}
+                              </Space>
+                            </a>
+                          </Tooltip>
+                        </Dropdown>
+                      )}
+                    </Flex>
                   </Flex>
                 </Card>
               </Header>
-              <Content style={{ margin: "24px 16px 0" }}>
+              <Content style={{ margin: "80px 4px 0" }}>
                 <div
                   style={{
-                    padding: 24,
-                    minHeight: 800,
+                    padding: "15px 5px 5px 5px",
+                    minHeight: 810,
                     background: "#f5f5f5",
                     borderRadius: borderRadiusLG,
                     alignItems: "center",
@@ -108,6 +183,20 @@ const App = () => {
           </Layout>
         </Router>
       )}
+      <Modal
+        title="แก้ไขข้อมูลผู้ใช้"
+        open={chPasswdShow}
+        onCancel={() => setChPasswdShow(false)}
+        footer={null}
+        closable={false}
+        keyboard={false}
+        styles={{
+          header: { backgroundColor: "transparent" },
+          container: { background: "linear-gradient(#d0ed29ff, #f0189aff)" },
+        }}
+      >
+        <ChangePassword onHide={() => setChPasswdShow(false)} />
+      </Modal>
     </>
   );
 };
