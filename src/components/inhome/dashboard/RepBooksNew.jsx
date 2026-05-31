@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, Flex, Tooltip, Button, Divider } from "antd";
-import Marquee from "react-fast-marquee";
+//import Marquee from "react-fast-marquee";
 import { FileOutlined } from "@ant-design/icons";
 import * as serveFns from "@/server/gas";
 import { arrShName, arrSubfixBook } from "@/components/saraban/RepBooks";

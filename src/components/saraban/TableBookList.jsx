@@ -9,6 +9,7 @@ import {
   Input,
   message,
   Tooltip,
+  Popover,
 } from "antd";
 import {
   FileOutlined,
@@ -257,20 +258,14 @@ const TableBookList = ({
       },
       getColumnSearchProps("title", "ชื่อเรื่อง"),
     ),
-    {
-      title: "การปฏิบัติ",
-      dataIndex: "action",
-      key: "action",
-      filters: [
-        { text: "กลุ่มบริหารวิชาการ", value: "กลุ่มบริหารวิชาการ" },
-        { text: "กลุ่มบริหารงานบุคคล", value: "กลุ่มบริหารงานบุคคล" },
-        { text: "กลุ่มบริหารงบประมาณ", value: "กลุ่มบริหารงบประมาณ" },
-        { text: "กลุ่มบริหารทั่วไป", value: "กลุ่มบริหารทั่วไป" },
-      ],
-      onFilter: (value, record) => record.action.includes(value),
-      // filtersSearch: true,
-      // filterSearchPlaceholder: "ค้นหากลุ่มงาน",
-    },
+    Object.assign(
+      {
+        title: "การปฏิบัติ",
+        dataIndex: "action",
+        key: "action",
+      },
+      getColumnSearchProps("action", "การปฏิบัติ"),
+    ),
     {
       title: "หมายเหตุ",
       dataIndex: "note",
@@ -318,20 +313,34 @@ const TableBookList = ({
                 icon={<UploadOutlined />}
               />
             </Tooltip>
-            {record.fileurl && (
+            {record.fileurl !== "[]" && (
               <Tooltip title="เปิดไฟล์">
-                {JSON.parse(record.fileurl).map((url) => (
+                <Popover
+                  content={
+                    <div>
+                      {JSON.parse(record.fileurl).map((url) => (
+                        <Button
+                          key={url}
+                          onClick={() => {
+                            window.open(url, "_blank");
+                            //console.log(url);
+                          }}
+                          variant="solid"
+                          color="primary"
+                          icon={<FileOutlined />} // ถ้าไม่มี icon ให้หยุดการทำงาน
+                        />
+                      ))}
+                    </div>
+                  }
+                  trigger="click"
+                  title="เปิดไฟล์"
+                >
                   <Button
-                    key={url}
-                    onClick={() => {
-                      window.open(url, "_blank");
-                      //console.log(url);
-                    }}
                     variant="solid"
                     color="primary"
-                    icon={<FileOutlined />} // ถ้าไม่มี icon ให้หยุดการทำงาน
+                    icon={<FileOutlined />}
                   />
-                ))}
+                </Popover>
               </Tooltip>
             )}
             {isOperator && (
