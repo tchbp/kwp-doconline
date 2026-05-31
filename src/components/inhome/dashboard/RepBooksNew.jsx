@@ -34,13 +34,17 @@ const RepBooksNew = ({ typeBook }) => {
         <div key={index} style={{ marginBottom: "16px" }}>
           <Divider style={{ borderColor: "#7cb305" }} titlePlacement="start">
             <Tooltip title="เปิดไฟล์">
-              <Button
-                type="text"
-                icon={<FileOutlined />}
-                onClick={() => window.open(value.fileurl, "_blank")}
-              >
+              <p>
                 ที่ {value.at}
-              </Button>
+                {JSON.parse(value.fileurl).map((url, i) => (
+                  <Button
+                    key={i}
+                    type="text"
+                    icon={<FileOutlined />}
+                    onClick={() => window.open(url, "_blank")}
+                  />
+                ))}
+              </p>
             </Tooltip>
           </Divider>
           <p

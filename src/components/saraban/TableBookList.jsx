@@ -320,15 +320,18 @@ const TableBookList = ({
             </Tooltip>
             {record.fileurl && (
               <Tooltip title="เปิดไฟล์">
-                <Button
-                  onClick={() => {
-                    window.open(record.fileurl, "_blank");
-                    console.log(record.fileurl);
-                  }}
-                  variant="solid"
-                  color="primary"
-                  icon={<FileOutlined />} // ถ้าไม่มี icon ให้หยุดการทำงาน
-                />
+                {JSON.parse(record.fileurl).map((url) => (
+                  <Button
+                    key={url}
+                    onClick={() => {
+                      window.open(url, "_blank");
+                      //console.log(url);
+                    }}
+                    variant="solid"
+                    color="primary"
+                    icon={<FileOutlined />} // ถ้าไม่มี icon ให้หยุดการทำงาน
+                  />
+                ))}
               </Tooltip>
             )}
             {isOperator && (

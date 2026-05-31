@@ -42,7 +42,7 @@ export const routes = [
   //   component: Student,
   // },
   {
-    title: "ไฟล์คำสั่ง",
+    title: "ไฟล์คำสั่ง (แบบเดิม)",
     url: "/listdocument",
     component: ListDocument,
   },

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, message, Upload, Form, Input } from "antd";
+import { Button, message, Upload, Form, Tooltip } from "antd";
 import * as serveFns from "@/server/gas";
-import { set } from "zod/v4";
 
 const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
   const [fileList, setFileList] = useState([]);
@@ -22,12 +21,15 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
         message.error(`${file.name} ขนาดไฟล์เกินกว่า 10MB`);
         console.log("File size exceeds the limit of 10MB");
       } else {
-        setFileList([...fileList, file]);
+        setFileList((prevList) => [...prevList, file]);
       }
 
       return false;
     },
-    accept: ".pdf",
+    //accept: ".pdf",
+    maxCount: 3,
+    multiple: true,
+    listType: "picture",
     fileList,
   };
   const layout = {
@@ -37,48 +39,80 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
   const tailLayout = {
     wrapperCol: { offset: 8, span: 16 },
   };
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (fileList.length === 0) {
       message.error("โปรดเลือกไฟล์ก่อนอัพโหลด");
       return;
     }
     setUploading(true);
-    const file = fileList[0];
+    //const file = fileList[0];
     const data = {
       id: id,
       at: at,
       title: title,
-      filename: file.name,
       bookType: bookType,
     };
     console.log(JSON.stringify(data));
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = (e) => {
-      serveFns
-        .uploadFileBook(e.target.result, data)
-        .then((data) => {
-          console.log(JSON.parse(data));
-          const { upFileId, upFileUrl } = JSON.parse(data);
-          setDataBookList((prevList) =>
-            prevList.map((book) =>
-              book.id === id
-                ? { ...book, fileid: upFileId, fileurl: upFileUrl }
-                : book,
-            ),
-          );
-          setUploading(false);
-          message.success(`อัพโหลดไฟล์ ${file.name} เรียบร้อยแล้ว`);
-          form.resetFields();
-          setFileList([]);
-          onClose();
-        })
-        .catch((error) => {
-          console.error(error); // พบข้อผิดพลาดในการอัพโหลดไฟล์
-          setUploading(false);
-          message.error(`เกิดข้อผิดพลาดในการอัพโหลดไฟล์ ${file.name}`);
-        });
-    };
+
+    // const reader = new FileReader();
+    // reader.readAsDataURL(file);
+    // reader.onloadend = (e) => {
+
+    // 1. Convert FileList to a standard Array to use map()
+    const filesArray = Array.from(fileList);
+
+    const filePromises = filesArray.map((file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        // Triggers once the file data is completely loaded
+        reader.onloadend = (e) => {
+          resolve({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            base64: e.target.result, // The read file contents
+          });
+        };
+
+        // Error handling
+        reader.onerror = (error) => reject(error);
+
+        // Read the file as a data URL (ideal for image/video previews)
+        reader.readAsDataURL(file);
+      });
+    });
+    const processedFiles = await Promise.all(filePromises);
+    //console.log(JSON.stringify(processedFiles));
+    //************************** */
+    serveFns
+      .uploadFileBook(processedFiles, data)
+      .then((data) => {
+        //console.log(JSON.parse(data));
+        const { upFileId, upFileUrl } = JSON.parse(data);
+        setDataBookList((prevList) =>
+          prevList.map((book) =>
+            book.id === id
+              ? {
+                  ...book,
+                  fileid: JSON.stringify(upFileId),
+                  fileurl: JSON.stringify(upFileUrl),
+                }
+              : book,
+          ),
+        );
+        setUploading(false);
+        message.success(`อัพโหลดไฟล์  เรียบร้อยแล้ว`);
+        form.resetFields();
+        setFileList([]);
+        onClose();
+      })
+      .catch((error) => {
+        console.error(error); // พบข้อผิดพลาดในการอัพโหลดไฟล์
+        setUploading(false);
+        message.error(`เกิดข้อผิดพลาดในการอัพโหลดไฟล์ `);
+      });
+    // *******************
+    //};
   };
 
   return (
@@ -90,7 +124,7 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
       </div>
       <Form
         form={form}
-        {...layout}
+        layout={"vertical"}
         name="control-upload"
         style={{ maxWidth: 600 }}
         initialValues={{ remember: true }}
@@ -98,7 +132,7 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
         autoComplete="off"
       >
         <Form.Item
-          label="ไฟล์เอกสาร (ไฟล์ .PDF ขนาดไม่เกิน 10MB)"
+          label="ไฟล์เอกสาร (ไฟล์ ขนาดไม่เกิน 10MB)"
           name="file"
           rules={[
             {
@@ -108,8 +142,7 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
             () => ({
               validator(_, value) {
                 const maxFileSize = 10 * 1024 * 1024; // 10MB limit
-                console.log(value);
-                console.log(`File size ${value.file.size}`);
+
                 if (value.file.size <= maxFileSize) {
                   return Promise.resolve();
                 }
@@ -121,9 +154,11 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
           ]}
         >
           <Upload {...propsUpload}>
-            <Button icon={<UploadOutlined />} disabled={fileList.length > 0}>
-              เลือกไฟล์ (ไฟล์ .PDF ขนาดไม่เกิน 10MB)
-            </Button>
+            <Tooltip title="ไฟล์เอกสารใดๆ ขนาดไม่เกิน 10MB">
+              <Button icon={<UploadOutlined />} disabled={uploading}>
+                เลือกไฟล์ (ไฟล์ ขนาดไม่เกิน 10MB)
+              </Button>
+            </Tooltip>
           </Upload>
         </Form.Item>
         <Form.Item {...tailLayout}>

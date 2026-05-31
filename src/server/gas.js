@@ -2,7 +2,7 @@ export function getSheetData(sheetName) {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -32,7 +32,7 @@ export const getStudentData = (stdClass) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -47,7 +47,7 @@ export const sendFile = (file, data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -61,7 +61,7 @@ export const sendFileCommand = (file, data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -76,7 +76,7 @@ export const delDocCommand = (nocmd) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -91,7 +91,7 @@ export const chkLogin = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -106,7 +106,7 @@ export const chPasswd = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -120,7 +120,7 @@ export const getSubj4Teach = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -134,7 +134,7 @@ export const std4Teach = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -148,7 +148,7 @@ export const std4Homeroom = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -162,7 +162,7 @@ export const putTeachMem = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -177,7 +177,7 @@ export const putHomeroom = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -192,7 +192,7 @@ export const getHomeroom = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -207,7 +207,7 @@ export const getStdHomeroom = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -221,7 +221,7 @@ export const getTeachMem = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -236,7 +236,7 @@ export const getStdAbs = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -251,7 +251,7 @@ export const getUserData = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -265,7 +265,7 @@ export const delMem = (objData) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -279,7 +279,7 @@ export const getTypeJob = () => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -293,7 +293,7 @@ export const getConst = (typeCons) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -307,7 +307,7 @@ export const sendFileJob = (file, data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -321,7 +321,7 @@ export function getSheetDataJob(user) {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -335,7 +335,7 @@ export const delDocJob = (user, fileid) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -349,7 +349,7 @@ export const getTeacher = () => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -363,7 +363,7 @@ export const getJob2Inspect = (data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -377,7 +377,7 @@ export const inspectJob = (data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -391,7 +391,7 @@ export const saveComment = (data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -405,7 +405,7 @@ export const getSheetDataPP5 = (user = "all") => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -419,7 +419,7 @@ export const putPP5 = (data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -433,7 +433,7 @@ export const delPP5 = (data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -447,7 +447,7 @@ export const addNoBook = (user, type, cmdType, data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -461,7 +461,7 @@ export const uploadFileBook = (file, data) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {
@@ -475,7 +475,7 @@ export const delBook = (bookType, id) => {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((res) => {
-        console.log(res);
+        //console.log(res);
         resolve(res);
       })
       .withFailureHandler((msg) => {

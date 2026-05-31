@@ -84,8 +84,8 @@ const FormAddBook = ({
         title: values.title,
         action: values.action,
         note: values.note,
-        fileid: data2Edit?.fileid || "",
-        fileurl: data2Edit?.fileurl || "",
+        fileid: data2Edit?.fileid || "[]",
+        fileurl: data2Edit?.fileurl || "[]",
         user: user,
       };
       console.log(JSON.stringify(newBook));
