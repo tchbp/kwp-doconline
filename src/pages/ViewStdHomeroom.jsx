@@ -94,7 +94,6 @@ const ViewStdHomeroom = () => {
       title: "เลขที่",
       dataIndex: "key",
       key: "key",
-      rowScope: "row",
     },
     {
       title: "เลขประจำตัว",
@@ -105,6 +104,7 @@ const ViewStdHomeroom = () => {
       title: "ชื่อ-สกุล",
       dataIndex: "name",
       key: "name",
+      fixed: "start",
     },
     {
       title: "ร่วมกิจกรรม",
@@ -174,13 +174,20 @@ const ViewStdHomeroom = () => {
               </Form>
             </Space>
           </ConfigProvider>
-          <Space>
+          <Space
+            orientation="vertical"
+            size="middle"
+            style={{ display: "flex" }}
+          >
             {showTab && (
               <Table
                 columns={columns}
                 dataSource={studentData}
-                pagination={false}
-                bordered
+                style={{ width: "100%" }}
+                scroll={{ x: 800 }}
+                size="small"
+                tableLayout="fixed"
+                pagination={{ pageSize: 50 }}
               />
             )}
           </Space>

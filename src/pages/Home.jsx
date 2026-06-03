@@ -11,6 +11,7 @@ import {
   Dropdown,
   Tooltip,
   Tabs,
+  BorderBeam,
 } from "antd";
 import {
   ScheduleOutlined,
@@ -73,45 +74,45 @@ const Home = ({ setLogin }) => {
   return (
     <>
       {!loginVal && (
-        <Flex
-          justify="center"
-          align="center"
-          style={{ margin: "30px", background: "#f0f2f5" }}
-        >
-          <Card
-            title="KWP Document Online"
-            hoverable
-            style={cardStyle}
-            styles={{
-              body: {
-                padding: 0,
-                overflow: "hidden",
-                background: "linear-gradient(#ff7a45, #b993d6)",
-              },
-              header: { backgroundColor: "#ff7a45" },
-            }}
+        <Flex justify="center" align="center" style={{ margin: "30px" }}>
+          <BorderBeam
+            color={[
+              { color: "#22c55e", percent: 0 },
+              { color: "#357ce6", percent: 54 },
+              { color: "#153bfa", percent: 100 },
+            ]}
           >
-            <Flex justify="space-between">
-              <img
-                alt="KWP Logo"
-                src="https://drive.google.com/thumbnail?id=1fNqpPoT98B_9pjrZHbnPtcjzkVp6h8GA"
-                style={imgStyle}
-              />
-              <Flex
-                vertical
-                align="flex-end"
-                justify="space-between"
-                style={{ padding: 32 }}
-              >
-                <Typography.Title level={3}>
-                  คุณยังไม่ลงชื่อเข้าใช้ โปรดลงชื่อเข้าใช้
-                </Typography.Title>
-                <Button variant="solid" onClick={() => setLoginShow(true)}>
-                  ลงชื่อเข้าใช้
-                </Button>
+            <Card
+              title="KWP Doc Online"
+              hoverable
+              style={{
+                width: 620,
+                borderRadius: 24,
+                background: "linear-gradient(#ff7a45, #b993d6)",
+              }}
+            >
+              <Flex justify="space-between">
+                <img
+                  alt="KWP Logo"
+                  src="https://drive.google.com/thumbnail?id=1fNqpPoT98B_9pjrZHbnPtcjzkVp6h8GA"
+                  style={imgStyle}
+                />
+                <Flex
+                  vertical
+                  align="flex-end"
+                  justify="space-between"
+                  style={{ padding: 32 }}
+                >
+                  <Typography.Title level={3}>
+                    คุณยังไม่ลงชื่อเข้าใช้ โปรดลงชื่อเข้าใช้
+                  </Typography.Title>
+                  <Button variant="solid" onClick={() => setLoginShow(true)}>
+                    ลงชื่อเข้าใช้
+                  </Button>
+                </Flex>
               </Flex>
-            </Flex>
-          </Card>
+            </Card>
+          </BorderBeam>
         </Flex>
       )}
       {loginVal && (

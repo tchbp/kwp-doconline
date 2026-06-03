@@ -361,7 +361,11 @@ const TableBookList = ({
 
   return (
     <>
-      <Table dataSource={dataBookList} columns={columns} />
+      <Table
+        dataSource={dataBookList}
+        columns={columns}
+        scroll={{ x: "max-content" }}
+      />
 
       {contextHolder}
     </>
