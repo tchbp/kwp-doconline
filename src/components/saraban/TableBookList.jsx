@@ -229,6 +229,7 @@ const TableBookList = ({
         title: "ที่",
         dataIndex: "at",
         key: "at",
+        fixed: "start",
       },
       getColumnSearchProps("at", "ที่"),
     ),
@@ -270,6 +271,7 @@ const TableBookList = ({
       title: "หมายเหตุ",
       dataIndex: "note",
       key: "note",
+      width: "150",
     },
     {
       title: "ไฟล์",
@@ -365,6 +367,7 @@ const TableBookList = ({
         dataSource={dataBookList}
         columns={columns}
         scroll={{ x: "max-content" }}
+        sticky={{ offsetHeader: 0 }}
       />
 
       {contextHolder}
