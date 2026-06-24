@@ -101,7 +101,7 @@ const genKadTop10 = () => {
     ];
     arrDayTh.forEach((day, i) => {
       objKadEmpty.push({
-        day: day,
+        วัน: day,
       });
       [...Array(9).keys()].forEach((pr) => {
         objKadEmpty[i][`คาบ${parseInt(pr) + 1}`] = 0;

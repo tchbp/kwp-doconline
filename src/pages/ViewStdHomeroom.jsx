@@ -94,17 +94,20 @@ const ViewStdHomeroom = () => {
       title: "เลขที่",
       dataIndex: "key",
       key: "key",
+      width: 50,
     },
     {
       title: "เลขประจำตัว",
       dataIndex: "id",
       key: "id",
+      width: 80,
     },
     {
       title: "ชื่อ-สกุล",
       dataIndex: "name",
       key: "name",
       fixed: "start",
+      width: 200,
     },
     {
       title: "ร่วมกิจกรรม",
