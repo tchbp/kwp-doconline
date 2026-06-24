@@ -15,6 +15,7 @@ import {
   Typography,
   ConfigProvider,
 } from "antd";
+import { FileOutlined } from "@ant-design/icons";
 import * as serveFns from "@/server/gas";
 import locale from "antd/locale/th_TH";
 import dayjs from "dayjs";
@@ -22,6 +23,7 @@ import "dayjs/locale/th";
 import * as bdDate from "@/BuddhistDate";
 import LoginContext from "@/LoginProvider";
 import Spin2Wait from "@/components/Spin2Wait";
+import ViewHomeroomKad from "./ViewHomeroomKad";
 
 dayjs.locale("th");
 
@@ -83,6 +85,38 @@ const ViewHomeroom = () => {
   }, [dateValue, studentClass]);
 
   const stdClass = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
+
+  const showStd = () => {
+    setOnSpin({ spin: true, message: "กำลังดึงข้อมูล โปรดรอซักครู่" });
+    serveFns
+      .getKadHomeRoom(dateValue)
+      .then((data) => {
+        console.log(data);
+        const studentData = JSON.parse(data);
+        setOnSpin({ spin: false, message: "กำลังดึงข้อมูล โปรดรอซักครู่" });
+        const modal = Modal.info({
+          title: "รายชื่อนักเรียนที่ขาด เข้าแถว/โฮมรูม",
+          icon: <FileOutlined />,
+          content: (
+            <ViewHomeroomKad
+              stdClass={stdClass}
+              tdate={dateValue}
+              studentData={studentData}
+              onClose={() => {
+                modal.destroy();
+              }}
+            />
+          ),
+          width: 800,
+          footer: null,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        setOnSpin({ spin: false, message: "กำลังดึงข้อมูล โปรดรอซักครู่" });
+      });
+  };
+
   const [form] = Form.useForm();
   const formItemLayout = {
     labelCol: {
@@ -163,12 +197,25 @@ const ViewHomeroom = () => {
           </ConfigProvider>
           <Space>
             {showTab && (
-              <Table
-                columns={columns}
-                dataSource={studentData}
-                pagination={false}
-                bordered
-              />
+              <Flex vertical gap="16px" style={{ width: "100%" }}>
+                <Table
+                  columns={columns}
+                  dataSource={studentData}
+                  pagination={false}
+                  bordered
+                />
+                <Flex justifyContent="flex-end" alignItems="center">
+                  <Button
+                    onClick={() => {
+                      showStd();
+                    }}
+                    type="primary"
+                    size="large"
+                  >
+                    แสดงรายชื่อนักเรียนที่ขาด
+                  </Button>
+                </Flex>
+              </Flex>
             )}
           </Space>
         </Space>

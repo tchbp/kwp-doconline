@@ -140,3 +140,50 @@ const genKadTop10 = () => {
     .getRange(2, 1, arrToSheet.length, arrToSheet[0].length)
     .setValues(arrToSheet);
 };
+const getKadHomeRoom = (date) => {
+  const hrData = JSON.parse(getSheetData("lineuphomeroom"));
+  const atDate = hrData.filter((row) => row["tdate"] === date);
+
+  const stdData = JSON.parse(getSheetData("studentAll"));
+
+  const dataKad = atDate.map((row) => {
+    const data = {};
+    data.tclass = row["tclass"];
+    data.kad = row["kad"] !== "" ? row["kad"].split(",") : [];
+    data.stdKad = [];
+    data.kad.forEach((stdId) => {
+      const indexOfStd = stdData.findIndex(
+        (std) => std["เลขประจำตัว"] === stdId,
+      );
+      if (indexOfStd !== -1) {
+        data.stdKad.push(
+          `${stdData[indexOfStd]["คำนำหน้าชื่อ"]}${stdData[indexOfStd]["ชื่อ"]} ${stdData[indexOfStd]["นามสกุล"]}`,
+        );
+      } else {
+        data.stdKad.push("นักเรียนไม่อยู่ในระบบ");
+      }
+    });
+    data.la = row["la"] !== "" ? row["la"].split(",") : [];
+    data.stdLa = [];
+    data.la.forEach((stdId) => {
+      const indexOfStd = stdData.findIndex(
+        (std) => std["เลขประจำตัว"] === stdId,
+      );
+      if (indexOfStd !== -1) {
+        data.stdLa.push(
+          `${stdData[indexOfStd]["คำนำหน้าชื่อ"]}${stdData[indexOfStd]["ชื่อ"]} ${stdData[indexOfStd]["นามสกุล"]}`,
+        );
+      } else {
+        data.stdLa.push("นักเรียนไม่อยู่ในระบบ");
+      }
+    });
+    return data;
+  });
+  return JSON.stringify(dataKad);
+};
+const testKadHR = () => {
+  const strdate = "06-24-26";
+  const dataKad = getKadHomeRoom(strdate);
+
+  Logger.log(dataKad);
+};

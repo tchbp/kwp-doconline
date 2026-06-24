@@ -485,3 +485,19 @@ export const delBook = (bookType, id) => {
       .delBook(bookType, id);
   });
 };
+
+export const getKadHomeRoom = (date) => {
+  return new Promise((resolve, reject) => {
+    //console.log(date);
+    google.script.run
+      .withSuccessHandler((res) => {
+        //console.log(res);
+        resolve(res);
+      })
+      .withFailureHandler((msg) => {
+        console.log(msg);
+        reject(msg);
+      })
+      .getKadHomeRoom(date);
+  });
+};
