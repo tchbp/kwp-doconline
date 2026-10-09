@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload, Form, Tooltip } from "antd";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 
 const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
   const [fileList, setFileList] = useState([]);
@@ -84,8 +85,7 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
     const processedFiles = await Promise.all(filePromises);
     //console.log(JSON.stringify(processedFiles));
     //************************** */
-    serveFns
-      .uploadFileBook(processedFiles, data)
+    callGas("uploadFileBook", processedFiles, data)
       .then((data) => {
         //console.log(JSON.parse(data));
         const { upFileId, upFileUrl } = JSON.parse(data);

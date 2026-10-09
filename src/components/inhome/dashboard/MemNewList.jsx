@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, Flex } from "antd";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import * as bdDate from "@/BuddhistDate";
 
 const MemNewList = () => {
   const [dataDoc, setDataDoc] = useState([]);
 
   useEffect(() => {
-    serveFns
-      .getDataNew5("tchmem")
+    callGas("getDataNew5", "tchmem")
       .then((data) => {
         console.log(data);
         setDataDoc(JSON.parse(data).reverse());

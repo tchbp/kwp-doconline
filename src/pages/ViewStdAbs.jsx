@@ -15,7 +15,8 @@ import {
   Typography,
   ConfigProvider,
 } from "antd";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import locale from "antd/locale/th_TH";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
@@ -62,8 +63,7 @@ const ViewStdAbs = () => {
         tdate: dateValue,
         tclass: studentClass,
       };
-      serveFns
-        .getStdAbs(objData)
+      callGas("getStdAbs", objData)
         .then((data) => {
           console.log(data);
           setStudentData(JSON.parse(data));

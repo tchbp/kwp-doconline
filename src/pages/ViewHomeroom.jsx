@@ -16,7 +16,8 @@ import {
   ConfigProvider,
 } from "antd";
 import { FileOutlined } from "@ant-design/icons";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import locale from "antd/locale/th_TH";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
@@ -69,8 +70,7 @@ const ViewHomeroom = () => {
         tdate: dateValue,
         tclass: studentClass,
       };
-      serveFns
-        .getHomeroom(objData)
+      callGas("getHomeroom", objData)
         .then((data) => {
           console.log(data);
           setStudentData(JSON.parse(data));
@@ -88,8 +88,7 @@ const ViewHomeroom = () => {
 
   const showStd = () => {
     setOnSpin({ spin: true, message: "กำลังดึงข้อมูล โปรดรอซักครู่" });
-    serveFns
-      .getKadHomeRoom(dateValue)
+    callGas("getKadHomeRoom", dateValue)
       .then((data) => {
         console.log(data);
         const studentData = JSON.parse(data);

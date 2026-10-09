@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { Card, Table, Flex, Collapse, message, Typography } from "antd";
 import { Link } from "react-router-dom";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import locale from "antd/locale/th_TH";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
@@ -13,8 +14,7 @@ const KadTop10 = () => {
   const [dataTop10, setDataTop10] = useState([]);
 
   useEffect(() => {
-    serveFns
-      .getSheetData("kadtop10")
+    callGas("getSheetData", "kadtop10")
       .then((data) => {
         setDataTop10(JSON.parse(data));
       })

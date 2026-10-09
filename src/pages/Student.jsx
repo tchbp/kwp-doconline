@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 
 //import TabStudent from "@/components/TabStudent";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import UpFile from "@/components/UpFile";
 import md5 from "md5";
 
@@ -66,8 +67,7 @@ const Student = () => {
     setStudentClass(value);
     setShowTab(false);
     console.log(value);
-    serveFns
-      .getStudentData(value)
+    callGas("getStudentData", value)
       .then((data) => {
         setStudentData(JSON.parse(data));
         console.log(studentData);

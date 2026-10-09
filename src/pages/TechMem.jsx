@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import {
   DatePicker,
   Card,
@@ -89,8 +90,7 @@ const TechMem = () => {
   };
   const getSubject = ({ user, all }) => {
     setSubjLoaded(false);
-    serveFns
-      .getSubj4Teach({ user, all })
+    callGas("getSubj4Teach", { user, all })
       .then((data) => {
         // parse once and normalize to { label, value }
         const subj4usr = typeof data === "string" ? JSON.parse(data) : data;
@@ -106,8 +106,7 @@ const TechMem = () => {
           }));
         } else {
           setSubjLoaded(false);
-          serveFns
-            .getTeacher()
+          callGas("getTeacher")
             .then((dataT) => {
               const teachers =
                 typeof dataT === "string" ? JSON.parse(dataT) : dataT;
@@ -145,8 +144,8 @@ const TechMem = () => {
   }, [t4checked, t4Usr]);
   useEffect(() => {
     //getSubject({ user: contexObj.dataLogin.user, all: t4checked });
-    serveFns
-      .getTeacher()
+    
+    callGas("getTeacher")
       .then((dataT) => {
         const teachers = typeof dataT === "string" ? JSON.parse(dataT) : dataT;
         const tOptions = teachers
@@ -176,8 +175,7 @@ const TechMem = () => {
         tclass: studentClass,
         tpr: pr,
       };
-      serveFns
-        .std4Teach(objData)
+      callGas("std4Teach", objData)
         .then((data) => {
           if (data.act === "") {
             setStudentData(JSON.parse(data.studentData));
@@ -303,8 +301,7 @@ const TechMem = () => {
       console.log("Values:", values);
       setOnSpin({ spin: true, message: "กำลังบันทึกข้อมูล โปรดรอซักครู่" });
       setUpLoading(true);
-      serveFns
-        .putTeachMem(values)
+      callGas("putTeachMem", values)
         .then((data) => {
           setStudentData([]);
           setShowTab(false);

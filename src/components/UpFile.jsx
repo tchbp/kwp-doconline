@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload, Form, Input } from "antd";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 
 const UpFile = ({ onHide }) => {
   const [fileList, setFileList] = useState([]);
@@ -20,8 +21,7 @@ const UpFile = ({ onHide }) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = (e) => {
-      serveFns
-        .sendFile(e.target.result, data)
+      callGas("sendFile", e.target.result, data)
         .then((data) => {
           console.log(data);
           setUploading(false);

@@ -22,7 +22,8 @@ import {
 import Highlighter from "react-highlight-words";
 import UpFileBook from "./UpFileBook";
 import FormAddBook from "./FormAddBook";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import * as bdDate from "@/BuddhistDate";
 
 import LoginContext from "@/LoginProvider";
@@ -98,8 +99,7 @@ const TableBookList = ({
     });
     if (confirmed) {
       setOnSpin(true);
-      serveFns
-        .delBook(bookType, id)
+      callGas("delBook", bookType, id)
         .then((data) => {
           setDataBookList(JSON.parse(data).reverse());
 

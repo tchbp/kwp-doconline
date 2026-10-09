@@ -14,7 +14,8 @@ import locale from "antd/locale/th_TH";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import * as bdDate from "@/BuddhistDate";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 
 dayjs.locale("th");
 
@@ -59,8 +60,7 @@ const FormAddBook = ({
     } else {
       form.setFieldsValue({ id: nextid });
     }
-    serveFns
-      .getTeacher()
+    callGas("getTeacher")
       .then((data) => {
         const teachers = JSON.parse(data);
         const teacherNames = teachers.map((t) => t.name);
@@ -90,8 +90,8 @@ const FormAddBook = ({
       };
       console.log(JSON.stringify(newBook));
       setUploading(true);
-      serveFns
-        .addNoBook(user, bookType, cmdType, newBook)
+      
+      callGas("addNoBook", user, bookType, cmdType, newBook)
         .then((result) => {
           setDataBookList(JSON.parse(result).reverse());
           setUploading(false);

@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Button, Form, Input, message, Checkbox } from "antd";
 import LoginContext from "@/LoginProvider";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import md5 from "md5";
 
 const ChangePassword = ({ onHide }) => {
@@ -21,8 +22,7 @@ const ChangePassword = ({ onHide }) => {
       newPassword: md5(values.newPassword),
     };
     setUpLoading(true);
-    serveFns
-      .chPasswd(objData)
+    callGas("chPasswd", objData)
       .then((isChange) => {
         if (isChange) {
           if (chUser) {

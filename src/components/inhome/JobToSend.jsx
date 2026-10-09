@@ -29,7 +29,8 @@ import {
   WarningOutlined,
   CommentOutlined,
 } from "@ant-design/icons";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import Highlighter from "react-highlight-words";
 import UpFileJob from "@/components/inhome/UpFileJob";
 import Spin2Wait from "@/components/Spin2Wait";
@@ -72,12 +73,11 @@ const JobToSend = () => {
   useEffect(() => {
     isSpin(true);
 
-    serveFns
-      .getConst("joblist")
+    callGas("getConst", "joblist")
       .then((joblist) => {
         setTypeJob(JSON.parse(joblist));
-        serveFns
-          .getSheetDataJob(contextObj.dataLogin.user)
+        
+        callGas("getSheetDataJob", contextObj.dataLogin.user)
           .then((data) => {
             setDataJob(JSON.parse(data).reverse());
             isSpin(false);
@@ -101,8 +101,7 @@ const JobToSend = () => {
     });
     if (confirmed) {
       isSpin(true);
-      serveFns
-        .delDocJob(contextObj.dataLogin.user, fileid)
+      callGas("delDocJob", contextObj.dataLogin.user, fileid)
         .then((data) => {
           setDataJob(JSON.parse(data).reverse());
           isSpin(false);
@@ -400,8 +399,8 @@ const TeacherPP5 = () => {
   const [stdClass, setStdClass] = useState([]);
 
   useEffect(() => {
-    serveFns
-      .getConst("templatepp5")
+    
+    callGas("getConst", "templatepp5")
       .then((data) => {
         setDataTmpPp5(JSON.parse(data));
         //isSpin(false);
@@ -409,18 +408,17 @@ const TeacherPP5 = () => {
       .catch((error) => {
         console.log(error);
       });
-    serveFns
-      .getTeacher()
+    
+      callGas("getTeacher")
       .then((data) => {
-        serveFns
-          .getConst("stdclass")
+        callGas("getConst", "stdclass")
           .then((data2) => {
             setTeacherList(JSON.parse(data));
             console.log(`Teacher List is ${data}`);
             setStdClass(JSON.parse(data2));
             console.log(`StdClass is ${data2}`);
-            serveFns
-              .getSheetDataPP5()
+            
+            callGas("getSheetDataPP5")
               .then((dataGetPP5) => {
                 setDataAllPp5(JSON.parse(dataGetPP5).reverse());
                 setDataMyPp5(
@@ -456,8 +454,7 @@ const TeacherPP5 = () => {
         content: "กำลังลบ ปพ.5 โปรดรอสักครู่...",
         key: "delPP5",
       });
-      serveFns
-        .delPP5(dataPP5)
+      callGas("delPP5", dataPP5)
         .then((data) => {
           setDataAllPp5(JSON.parse(data).reverse());
           setDataMyPp5(
@@ -822,8 +819,8 @@ const SendPP5 = ({ setInputShow, setDataMyPp5, setDataAllPp5, stdClass }) => {
     };
     console.log(`PP5 Data is ${JSON.stringify(pp5Data)}`);
     // Call the server function to put PP5 data
-    serveFns
-      .putPP5(pp5Data)
+    
+    callGas("putPP5", pp5Data)
       .then((data) => {
         setDataAllPp5(JSON.parse(data).reverse());
         setDataMyPp5(

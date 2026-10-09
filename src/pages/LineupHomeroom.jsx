@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import * as serveFns from "@/server/gas";
+import {callGas} from "@/utils/gasApi";
 import {
   DatePicker,
   Card,
@@ -91,9 +91,8 @@ const LineupHomeroom = () => {
         tclass: studentClass,
         tpr: pr,
       };
-      serveFns
-        .std4Homeroom(objData)
-        .then((data) => {
+         
+        callGas("std4Homeroom", objData).then((data) => {
           if (data.act === "") {
             setStudentData(JSON.parse(data.studentData));
             setShowTab(true);
@@ -201,8 +200,8 @@ const LineupHomeroom = () => {
       console.log("Values:", values);
       setOnSpin({ spin: true, message: "กำลังบันทึกข้อมูล โปรดรอซักครู่" });
       setUpLoading(true);
-      serveFns
-        .putHomeroom(values)
+      
+      callGas("putHomeroom", values)
         .then((data) => {
           setStudentData([]);
           setShowTab(false);

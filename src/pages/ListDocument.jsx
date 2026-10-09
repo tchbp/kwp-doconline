@@ -18,7 +18,7 @@ import {
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import UpCommand from "@/components/doccommand/UpCommand";
-import * as serveFns from "@/server/gas";
+import { callGas } from "@/utils/gasApi";
 import * as bdDate from "@/BuddhistDate";
 import Spin2Wait from "@/components/Spin2Wait";
 import LoginContext from "@/LoginProvider";
@@ -34,8 +34,7 @@ const ListDocument = () => {
   useEffect(() => {
     setIsOperator(contextObj.dataLogin.level.includes("1"));
     isSpin(true);
-    serveFns
-      .getSheetData("doccommand")
+    callGas("getSheetData", "doccommand" )
       .then((data) => {
         setDataCommand(JSON.parse(data).reverse());
         isSpin(false);
@@ -55,16 +54,11 @@ const ListDocument = () => {
     });
     if (confirmed) {
       isSpin(true);
-      serveFns
-        .delDocCommand(nocmd)
-        .then((data) => {
-          setDataCommand(JSON.parse(data));
-          isSpin(false);
-          message(`ลบไฟล์คำสั่งเลขที่ ${nocmd} แล้ว`);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      const data = await callGas("delDocCommand", nocmd);
+      setDataCommand(JSON.parse(data));
+      isSpin(false);
+      message(`ลบไฟล์คำสั่งเลขที่ ${nocmd} แล้ว`);
+      
     }
   };
   //---------------End Delete Function----------------
