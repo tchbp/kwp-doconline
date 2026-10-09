@@ -23,7 +23,8 @@ import {
   FormOutlined,
   ClockCircleOutlined,
 } from "@ant-design/icons";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import Highlighter from "react-highlight-words";
 import Spin2Wait from "@/components/Spin2Wait";
 import CommentJob from "@/components/inhome/CommentJob";
@@ -92,11 +93,10 @@ const Inspect = () => {
       user: contextObj.dataLogin.user,
       level: contextObj.dataLogin.level,
     };
-    serveFns
-      .getTeacher()
+    callGas("getTeacher")
       .then((data) => {
-        serveFns
-          .getJob2Inspect(dataJob)
+        
+        callGas("getJob2Inspect", dataJob)
           .then((data2) => {
             //-- setTeacherList
             setTeacherList(JSON.parse(data));
@@ -227,8 +227,7 @@ const Inspect = () => {
       inspect: inspect,
     };
     isSpin(true);
-    serveFns
-      .inspectJob(data)
+    callGas("inspectJob", data)
       .then((data) => {
         const obj = JSON.parse(data);
         setJobData(obj.jobData);

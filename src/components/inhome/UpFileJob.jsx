@@ -2,7 +2,8 @@ import LoginContext from "@/LoginProvider";
 import { useState, useContext, useEffect } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload, Form, Input, Select } from "antd";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 //import * as bdDate from "@/BuddhistDate";
 
 const UpFileJob = ({ onHide, setDataJob, typeJob }) => {
@@ -26,8 +27,7 @@ const UpFileJob = ({ onHide, setDataJob, typeJob }) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = (e) => {
-      serveFns
-        .sendFileJob(e.target.result, data)
+      callGas("sendFileJob", e.target.result, data)
         .then((data) => {
           console.log(JSON.parse(data));
           setDataJob(JSON.parse(data));

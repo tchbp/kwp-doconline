@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { Card, Flex, Tooltip, Button, Alert, List, Divider } from "antd";
 import Marquee from "react-fast-marquee";
 import { FileOutlined } from "@ant-design/icons";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 
 const DocNewList = () => {
   const [dataDoc, setDataDoc] = useState([]);
 
   useEffect(() => {
-    serveFns
-      .getDataNew5("doccommand")
+    callGas("getDataNew5", "doccommand")
       .then((data) => {
         console.log(data);
         setDataDoc(JSON.parse(data).reverse());

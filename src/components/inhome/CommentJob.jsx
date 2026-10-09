@@ -12,7 +12,8 @@ import { Flex, Form, Input, Button, message } from "antd";
 //   FormOutlined,
 //   ClockCircleOutlined,
 // } from "@ant-design/icons";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 
 const CommentJob = ({ user, pos, fileid, memo, comm, commD, onClose }) => {
   const [upLoading, setUpLoading] = useState(false);
@@ -34,8 +35,7 @@ const CommentJob = ({ user, pos, fileid, memo, comm, commD, onClose }) => {
 
     //console.log(`    objData is ${JSON.stringify(objData)}`);
     //console.log(`    values is ${JSON.stringify(values)}`);
-    serveFns
-      .saveComment(objData)
+    callGas("saveComment", objData)
       .then((isSave) => {
         if (isSave) {
           message.success("บันทึกความเห็นแล้ว");

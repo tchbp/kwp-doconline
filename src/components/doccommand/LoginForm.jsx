@@ -1,7 +1,8 @@
 import React, { useContext, useState } from "react";
 import { Button, Form, Input, message, Flex } from "antd";
 import LoginContext from "@/LoginProvider";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import md5 from "md5";
 
 const LoginForm = ({ onHide, isLogin }) => {
@@ -16,8 +17,7 @@ const LoginForm = ({ onHide, isLogin }) => {
       password: md5(values.password),
     };
     setUpLoading(true);
-    serveFns
-      .chkLogin(obj2Login)
+    callGas("chkLogin", obj2Login)
       .then((data) => {
         const objData = JSON.parse(data);
         contexObj.setLogin(objData);

@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Flex, Button, Typography, Modal } from "antd";
 import { FileAddOutlined } from "@ant-design/icons";
 
-import * as serveFns from "@/server/gas";
+import { callGas } from "@/utils/gasApi";
 import FormAddBook from "./FormAddBook";
 
 import Spin2Wait from "@/components/Spin2Wait";
@@ -34,8 +34,7 @@ const RepBooks = ({ bookType }) => {
   useEffect(() => {
     setOnSpin(true);
 
-    serveFns
-      .getSheetData(arrShName[bookType])
+    callGas("getSheetData", arrShName[bookType])
       .then((data) => {
         setDataBookList(JSON.parse(data).reverse());
         setOnSpin(false);

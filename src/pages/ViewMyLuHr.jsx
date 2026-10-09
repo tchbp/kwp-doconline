@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { Table, Space, Tooltip, Button, message, Modal, Card } from "antd";
 import { DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import locale from "antd/locale/th_TH";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
@@ -27,8 +28,7 @@ const ViewMyLuHr = () => {
       user: contextObj.dataLogin.user,
       shName: "lineuphomeroom",
     };
-    serveFns
-      .getUserData(objData)
+    callGas("getUserData", objData)
       .then((data) => {
         //console.log(data);
         setMyData(JSON.parse(data));
@@ -49,12 +49,12 @@ const ViewMyLuHr = () => {
     });
     if (confirmed) {
       setOnSpin({ spin: true, message: "กำลังดำเนินการ โปรดรอซักครู่" });
-      serveFns
-        .delMem({
-          ref: ref,
-          user: contextObj.dataLogin.user,
-          shName: "lineuphomeroom",
-        })
+      
+      callGas("delMem", {
+        ref: ref,
+        user: contextObj.dataLogin.user,
+        shName: "lineuphomeroom",
+      })
         .then((data) => {
           setMyData(JSON.parse(data));
           setOnSpin({ spin: false, message: "กำลังดำเนินการ โปรดรอซักครู่" });

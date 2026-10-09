@@ -10,7 +10,8 @@ import {
   DatePicker,
   ConfigProvider,
 } from "antd";
-import * as serveFns from "@/server/gas";
+
+import { callGas } from "@/utils/gasApi";
 import locale from "antd/locale/th_TH";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
@@ -49,8 +50,7 @@ const UpCommand = ({ onHide, setDataCommand }) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = (e) => {
-      serveFns
-        .sendFileCommand(e.target.result, data)
+      callGas("sendFileCommand", e.target.result, data)
         .then((data) => {
           console.log(JSON.parse(data));
           setDataCommand(JSON.parse(data));
