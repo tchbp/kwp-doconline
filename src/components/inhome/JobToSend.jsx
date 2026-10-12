@@ -76,7 +76,7 @@ const JobToSend = () => {
     callGas("getConst", "joblist")
       .then((joblist) => {
         setTypeJob(JSON.parse(joblist));
-        
+
         callGas("getSheetDataJob", contextObj.dataLogin.user)
           .then((data) => {
             setDataJob(JSON.parse(data).reverse());
@@ -399,7 +399,6 @@ const TeacherPP5 = () => {
   const [stdClass, setStdClass] = useState([]);
 
   useEffect(() => {
-    
     callGas("getConst", "templatepp5")
       .then((data) => {
         setDataTmpPp5(JSON.parse(data));
@@ -408,8 +407,8 @@ const TeacherPP5 = () => {
       .catch((error) => {
         console.log(error);
       });
-    
-      callGas("getTeacher")
+
+    callGas("getTeacher")
       .then((data) => {
         callGas("getConst", "stdclass")
           .then((data2) => {
@@ -417,7 +416,7 @@ const TeacherPP5 = () => {
             console.log(`Teacher List is ${data}`);
             setStdClass(JSON.parse(data2));
             console.log(`StdClass is ${data2}`);
-            
+
             callGas("getSheetDataPP5")
               .then((dataGetPP5) => {
                 setDataAllPp5(JSON.parse(dataGetPP5).reverse());
@@ -803,10 +802,40 @@ const SendPP5 = ({ setInputShow, setDataMyPp5, setDataAllPp5, stdClass }) => {
   const contextObj = useContext(LoginContext);
   const [form] = Form.useForm();
   const [uploading, setUploading] = useState(false);
+  const [subj4Teach, setSubj4Teach] = useState([]);
+  const [subjOptions, setSubjOptions] = useState([]);
 
   /* const isSpin = (e) => {
     setOnSpin(e);
   }; */
+  const getSubj4Teach = async () => {
+    const user = contextObj.dataLogin.user;
+    const subjData = await callGas("getSubj4Teach", { user, all: false });
+    //กันรหัสวิชาซ้ำ
+    const uniqueSubj = JSON.parse(subjData).filter(
+      (subj, index, self) =>
+        index === self.findIndex((s) => s.subj === subj.subj),
+    );
+    setSubj4Teach(uniqueSubj);
+    let normalizedSubj = uniqueSubj.map((subj) => ({
+      label: `${subj.subj} ${subj.namesubj}`,
+      value: subj.subj,
+    }));
+    console.log(
+      `Normalized Subject Options: ${JSON.stringify(normalizedSubj)}`,
+    );
+    setSubjOptions(normalizedSubj);
+  };
+
+  useEffect(() => {
+    getSubj4Teach();
+  }, []);
+
+  const handleSubjChange = (value) => {
+    const namesubject =
+      subj4Teach.find((subj) => subj.subj === value)?.namesubj || "";
+    form.setFieldsValue({ memo: namesubject });
+  };
 
   const handleSubmit = () => {
     setUploading(true);
@@ -819,7 +848,7 @@ const SendPP5 = ({ setInputShow, setDataMyPp5, setDataAllPp5, stdClass }) => {
     };
     console.log(`PP5 Data is ${JSON.stringify(pp5Data)}`);
     // Call the server function to put PP5 data
-    
+
     callGas("putPP5", pp5Data)
       .then((data) => {
         setDataAllPp5(JSON.parse(data).reverse());
@@ -864,6 +893,24 @@ const SendPP5 = ({ setInputShow, setDataMyPp5, setDataAllPp5, stdClass }) => {
         autoComplete="off"
       >
         <Form.Item
+          name="subject"
+          label="รายวิชา"
+          rules={[{ required: true, message: "โปรดกรอกข้อมูลส่วนนี้ก่อน!" }]}
+        >
+          <Select
+            placeholder="รายวิชา"
+            options={subjOptions}
+            onChange={handleSubjChange}
+          />
+        </Form.Item>
+        <Form.Item
+          name="memo"
+          label="ชื่อวิชา/รายละเอียด"
+          //rules={[{ required: true, message: "โปรดกรอกข้อมูลส่วนนี้ก่อน!" }]}
+        >
+          <Input placeholder="บันทึกเพิ่มเติม" />
+        </Form.Item>
+        <Form.Item
           label="ชั้นเรียน"
           name="class"
           rules={[{ required: true, message: "โปรดกรอกข้อมูลส่วนนี้ก่อน!" }]}
@@ -875,21 +922,6 @@ const SendPP5 = ({ setInputShow, setDataMyPp5, setDataAllPp5, stdClass }) => {
               value: val.classroom,
             }))}
           />
-        </Form.Item>
-
-        <Form.Item
-          name="subject"
-          label="รหัสวิชา ชื่อวิชา ฯ"
-          rules={[{ required: true, message: "โปรดกรอกข้อมูลส่วนนี้ก่อน!" }]}
-        >
-          <Input placeholder="รหัสวิชา ชื่อวิชา ฯ" />
-        </Form.Item>
-        <Form.Item
-          name="memo"
-          label="บันทึกเพิ่มเติม"
-          //rules={[{ required: true, message: "โปรดกรอกข้อมูลส่วนนี้ก่อน!" }]}
-        >
-          <Input placeholder="บันทึกเพิ่มเติม" />
         </Form.Item>
         <Form.Item
           name="fileurl"

@@ -100,7 +100,12 @@ const TechMem = () => {
         // );
         let normalized = [];
         if (!all) {
-          normalized = subj4usr.map((s) => ({
+          //กันรหัสวิชาซ้ำกัน
+          const uniqueSubj = subj4usr.filter(
+            (subj, index, self) =>
+              index === self.findIndex((s) => s.subj === subj.subj),
+          );
+          normalized = uniqueSubj.map((s) => ({
             label: (s.namesubj ?? s.name ?? "").toString(),
             value: (s.subj ?? s.id ?? "").toString(),
           }));
@@ -115,6 +120,11 @@ const TechMem = () => {
                 title: t.name,
                 options: subj4usr
                   .filter((s) => s.user === t.user)
+                  // กันรหัสวิชาซ้ำกัน
+                  .filter(
+                    (s, index, self) =>
+                      index === self.findIndex((ss) => ss.subj === s.subj),
+                  )
                   .map((s) => ({
                     label: (s.namesubj ?? s.name ?? "").toString(),
                     value: (s.subj ?? s.id ?? "").toString(),
@@ -144,7 +154,7 @@ const TechMem = () => {
   }, [t4checked, t4Usr]);
   useEffect(() => {
     //getSubject({ user: contexObj.dataLogin.user, all: t4checked });
-    
+
     callGas("getTeacher")
       .then((dataT) => {
         const teachers = typeof dataT === "string" ? JSON.parse(dataT) : dataT;
@@ -325,7 +335,7 @@ const TechMem = () => {
         });
     } else {
       message.warning(
-        "ยังไม่สามารถบันทึกได้ อาจมีข้อผิดพลาดบางประการโปรดตรวจสออบ"
+        "ยังไม่สามารถบันทึกได้ อาจมีข้อผิดพลาดบางประการโปรดตรวจสออบ",
       );
     }
   };
