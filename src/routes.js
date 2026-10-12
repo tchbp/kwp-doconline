@@ -42,11 +42,6 @@ export const routes = [
   //   component: Student,
   // },
   {
-    title: "ไฟล์คำสั่ง (แบบเดิม)",
-    url: "/listdocument",
-    component: ListDocument,
-  },
-  {
     title: "สารบรรณ",
     url: "/saraban",
     component: TabsSaraban,
@@ -60,5 +55,10 @@ export const routes = [
     title: "บันทึกเข้าแถว/โฮมรูม",
     url: "/lineuphomeroom",
     component: TabsLineupHomeroom,
+  },
+  {
+    title: "ไฟล์คำสั่ง (แบบเดิม)",
+    url: "/listdocument",
+    component: ListDocument,
   },
 ];
