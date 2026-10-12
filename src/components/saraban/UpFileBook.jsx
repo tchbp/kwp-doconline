@@ -88,7 +88,7 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
     callGas("uploadFileBook", processedFiles, data)
       .then((data) => {
         //console.log(JSON.parse(data));
-        const { upFileId, upFileUrl } = JSON.parse(data);
+        const { upFileId, upFileUrl, upFileName } = JSON.parse(data);
         setDataBookList((prevList) =>
           prevList.map((book) =>
             book.id === id
@@ -96,6 +96,7 @@ const UpFileBook = ({ bookType, id, at, title, onClose, setDataBookList }) => {
                   ...book,
                   fileid: JSON.stringify(upFileId),
                   fileurl: JSON.stringify(upFileUrl),
+                  filename: JSON.stringify(upFileName),
                 }
               : book,
           ),

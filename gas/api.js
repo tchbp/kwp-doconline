@@ -1021,6 +1021,7 @@ const uploadFileBook = (arrFiles, data) => {
   const folder = DriveApp.getFolderById(folderId);
   let arrFileId = [];
   let arrFileUrl = [];
+  let arrFileName = [];
   arrFiles.forEach((file, i) => {
     const contentType = file.base64.substring(5, file.base64.indexOf(";"));
     const bytes = Utilities.base64Decode(
@@ -1035,6 +1036,7 @@ const uploadFileBook = (arrFiles, data) => {
     const upFile = folder.createFile(blob);
     arrFileId.push(upFile.getId());
     arrFileUrl.push(upFile.getUrl());
+    arrFileName.push(upFile.getName());
   });
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
     arrShName[bookType],
@@ -1055,9 +1057,18 @@ const uploadFileBook = (arrFiles, data) => {
       ...JSON.parse(sheet.getRange(bookRow, 10).getValue() || "[]"),
       ...arrFileUrl,
     ];
+    arrFileName = [
+      ...JSON.parse(sheet.getRange(bookRow, 12).getValue() || "[]"),
+      ...arrFileName,
+    ];
     sheet.getRange(bookRow, 9).setValue(JSON.stringify(arrFileId));
     sheet.getRange(bookRow, 10).setValue(JSON.stringify(arrFileUrl));
-    return JSON.stringify({ upFileId: arrFileId, upFileUrl: arrFileUrl });
+    sheet.getRange(bookRow, 12).setValue(JSON.stringify(arrFileName));
+    return JSON.stringify({
+      upFileId: arrFileId,
+      upFileUrl: arrFileUrl,
+      upFileName: arrFileName,
+    });
   } else {
     throw new Error("ไม่พบข้อมูลหนังสือที่ต้องการอัปโหลดไฟล์");
   }

@@ -187,3 +187,26 @@ const testKadHR = () => {
 
   Logger.log(dataKad);
 };
+
+//temporary function  =====================================================================>
+
+const getFileNameBook = () => {
+  const sheetname = ["repbooks", "innerbooks", "sendbooks", "sendbooks"];
+
+  sheetname.forEach((namesh) => {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(namesh);
+    const lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      for (let i = 2; i <= lastRow; i++) {
+        const strFileID = sheet.getRange(i, 9).getValue();
+        if (strFileID !== "[]") {
+          let arrFileName = [];
+          JSON.parse(strFileID).forEach((file) => {
+            arrFileName.push(DriveApp.getFileById(file).getName());
+          });
+          sheet.getRange(i, 12).setValue(JSON.stringify(arrFileName));
+        }
+      }
+    }
+  });
+};
