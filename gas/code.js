@@ -210,3 +210,60 @@ const getFileNameBook = () => {
     }
   });
 };
+// ==============   pdfEditor  =====================================================================>
+// ดึงไฟล์ PDF จาก Google Drive
+function getPdfAsBase64(fileId) {
+  try {
+    const file = DriveApp.getFileById(fileId);
+    return Utilities.base64Encode(file.getBlob().getBytes());
+  } catch (e) {
+    throw new Error("ไม่พบไฟล์ PDF หรือไม่มีสิทธิ์เข้าถึง: " + e.message);
+  }
+}
+
+// ดึงไฟล์รูปภาพลายเซ็นจาก Google Drive
+function getSignatureAsDataUrl(imageFileId) {
+  try {
+    const file = DriveApp.getFileById(imageFileId);
+    const blob = file.getBlob();
+    const contentType = blob.getContentType();
+    const base64 = Utilities.base64Encode(blob.getBytes());
+    return `data:${contentType};base64,${base64}`;
+  } catch (e) {
+    throw new Error("ไม่พบไฟล์รูปภาพลายเซ็น: " + e.message);
+  }
+}
+
+// ดึงฟอนต์ภาษาไทย THSarabunNew
+function getThaiFontBase64() {
+  try {
+    const FONT_FILE_ID = "18tYxSqL-EcFEoV1E0wFSW73uCavoQmxv";
+    const file = DriveApp.getFileById(FONT_FILE_ID);
+    return Utilities.base64Encode(file.getBlob().getBytes());
+  } catch (e) {
+    throw new Error("ไม่สามารถโหลดฟอนต์ภาษาไทยได้: " + e.message);
+  }
+}
+
+// บันทึกทับเนื้อหาไฟล์เดิม โดยคง File ID เดิมไว้ (ใช้ Advanced Drive Service v3)
+function overwritePdf(fileId, base64Data) {
+  try {
+    const fileName = DriveApp.getFileById(fileId).getName();
+    const bytes = Utilities.base64Decode(base64Data);
+    const blob = Utilities.newBlob(bytes, "application/pdf", fileName);
+
+    const updated = Drive.Files.update({}, fileId, blob, { fields: "id,name" });
+
+    return {
+      success: true,
+      fileName: (updated && updated.name) || fileName,
+      fileId: (updated && updated.id) || fileId,
+      newFileId: (updated && updated.id) || fileId,
+      updatedTime: new Date().toLocaleString("th-TH"),
+    };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+}
+
+// ============== End  pdfEditor  =====================================================================>
