@@ -175,13 +175,14 @@ const chkLogin = ({ username, password }) => {
   let objData = {};
   let arrLog = [username];
   if (foundUser) {
-    const arrUser = sheet.getRange(foundUser.getRow(), 6, 1, 5).getValues();
+    const arrUser = sheet.getRange(foundUser.getRow(), 6, 1, 7).getValues();
     if (arrUser[0][2] === password) {
       objData.isLogin = true;
       objData.user = arrUser[0][1];
       objData.name = arrUser[0][0];
       objData.level = arrUser[0][3].split(",");
       objData.advice = arrUser[0][4];
+      objData.sigId = arrUser[0][6];
       arrLog.push("ผ่าน");
     } else {
       objData.isLogin = false;

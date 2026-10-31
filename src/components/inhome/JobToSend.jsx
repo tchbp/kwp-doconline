@@ -1,6 +1,7 @@
 import LoginContext from "@/LoginProvider";
 import { useState, useEffect, useContext, useRef } from "react";
 import CommentJob from "@/components/inhome/CommentJob";
+import PdfEditorModal from "@/components/PdfEditorModal";
 // import { Link } from "react-router-dom";
 import {
   Card,
@@ -38,15 +39,27 @@ import Spin2Wait from "@/components/Spin2Wait";
 const JobToSend = () => {
   const contextObj = useContext(LoginContext);
   const [modalShow, setModalShow] = useState(false);
-  const [dataJob, setDataJob] = useState(null);
+  const [dataJob, setDataJob] = useState([]);
   const [onSpin, setOnSpin] = useState(false);
   const [typeJob, setTypeJob] = useState([]);
+  const [pdfModalVisible, setPdfModalVisible] = useState(false);
+  const [pdfId, setPdfId] = useState(null);
+  const [job2Edit, setJob2Edit] = useState(null);
+  const [memo, setMemo] = useState(null);
 
   const isSpin = (e) => {
     setOnSpin(e);
   };
   // **************************** constant to comment ********************
   const user2comm = contextObj.dataLogin.user;
+  const sigId = contextObj.dataLogin.sigId;
+
+  const handleFileCheck = (fileid, typeJob, memo) => {
+    setPdfId(fileid);
+    setJob2Edit(typeJob);
+    setMemo(memo);
+    setPdfModalVisible(true);
+  };
 
   const handleCommentClick = (fileid, comm, commD, memo) => {
     const modal = Modal.info({
@@ -80,6 +93,7 @@ const JobToSend = () => {
         callGas("getSheetDataJob", contextObj.dataLogin.user)
           .then((data) => {
             setDataJob(JSON.parse(data).reverse());
+            console.log(`Data Job is ${data}`);
             isSpin(false);
           })
           .catch((error) => {
@@ -238,7 +252,7 @@ const JobToSend = () => {
     ),
     {
       title: "ไฟล์",
-      width: 80,
+      width: 100,
       key: "fileid",
       render: (_, record) => (
         <>
@@ -251,9 +265,18 @@ const JobToSend = () => {
                 }}
                 variant="solid"
                 color="primary"
-              >
-                <FileOutlined />
-              </Button>
+                icon={<FileOutlined />}
+              />
+            </Tooltip>
+            <Tooltip title="ตรวจไฟล์ PDF">
+              <Button
+                variant="solid"
+                color="red"
+                icon={<FileOutlined />}
+                onClick={() => {
+                  handleFileCheck(record.fileid, record.typeJob, record.memo);
+                }}
+              />
             </Tooltip>
             <Tooltip title="ความคิดเห็นของผู้ตรวจ/ผู้อำนวยการ">
               <Button
@@ -275,9 +298,8 @@ const JobToSend = () => {
                 variant="solid"
                 color="danger"
                 onClick={() => delDocJob(record.memo, record.fileid)}
-              >
-                <DeleteOutlined />
-              </Button>
+                icon={<DeleteOutlined />}
+              />
             </Tooltip>
           </Space.Compact>
         </>
@@ -321,9 +343,25 @@ const JobToSend = () => {
   const hideModalUpFile = () => {
     setModalShow(false);
   };
-
+  // if (dataJob.length === 0) return <div>ไม่มีไฟล์งานที่ส่ง</div>;
   return (
     <>
+      <PdfEditorModal
+        key={pdfId} // ★ remount เมื่อเปลี่ยนไฟล์
+        open={pdfModalVisible}
+        pdfId={pdfId}
+        sigId={sigId}
+        mode="signature" // เปิดมาโหมดลายเซ็นเลย
+        onClose={() => setPdfModalVisible(false)}
+        onSaved={(res) => {
+          // res จาก overwritePdf
+          //setPdfModalVisible(false);
+          //reload();
+        }}
+        typeJob={job2Edit}
+        memo={memo}
+        //stamp={false} // ไม่ต้องแสดงตราประทับรับใน modal
+      />
       <Card
         title="ส่งงาน"
         hoverable
@@ -709,17 +747,19 @@ const TeacherPP5 = () => {
             </p>
           );
         },
-        filters: teacherList.map((teacher) => ({
-          text: teacher.name,
-          value: teacher.user,
-        })),
+        filters: (Array.isArray(teacherList) ? teacherList : []).map(
+          (teacher) => ({
+            text: teacher.name,
+            value: teacher.user,
+          }),
+        ),
         onFilter: (value, record) => record.user.includes(value),
       },
       {
         title: "ชั้นเรียน",
         key: "class",
         dataIndex: "class",
-        filters: stdClass.map((val) => ({
+        filters: (Array.isArray(stdClass) ? stdClass : []).map((val) => ({
           text: val.classroom,
           value: val.classroom,
         })),
@@ -817,10 +857,12 @@ const SendPP5 = ({ setInputShow, setDataMyPp5, setDataAllPp5, stdClass }) => {
         index === self.findIndex((s) => s.subj === subj.subj),
     );
     setSubj4Teach(uniqueSubj);
-    let normalizedSubj = uniqueSubj.map((subj) => ({
-      label: `${subj.subj} ${subj.namesubj}`,
-      value: subj.subj,
-    }));
+    let normalizedSubj = (Array.isArray(uniqueSubj) ? uniqueSubj : []).map(
+      (subj) => ({
+        label: `${subj.subj} ${subj.namesubj}`,
+        value: subj.subj,
+      }),
+    );
     console.log(
       `Normalized Subject Options: ${JSON.stringify(normalizedSubj)}`,
     );
@@ -917,7 +959,7 @@ const SendPP5 = ({ setInputShow, setDataMyPp5, setDataAllPp5, stdClass }) => {
         >
           <Select
             placeholder="ชั้นเรียน"
-            options={stdClass.map((val) => ({
+            options={(Array.isArray(stdClass) ? stdClass : []).map((val) => ({
               label: val.classroom,
               value: val.classroom,
             }))}

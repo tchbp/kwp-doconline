@@ -450,13 +450,29 @@ const PdfViewerCanvas = ({
                         }`}
                       >
                         {sigData && sigData.dataUrl ? (
-                          <img
-                            src={sigData.dataUrl}
-                            alt="ลายเซ็นต์"
-                            className="w-full h-full object-contain pointer-events-none select-none"
-                            style={{ display: "block" }}
-                            draggable={false}
-                          />
+                          <div className="flex flex-col items-center w-full h-full">
+                            <img
+                              src={sigData.dataUrl}
+                              alt="ลายเซ็นต์"
+                              className="w-full h-full object-contain pointer-events-none select-none"
+                              style={{ display: "block" }}
+                              draggable={false}
+                            />
+                            {item.showDate && item.dateText && (
+                              <div
+                                className="mt-0.5 text-center text-black select-none"
+                                style={{
+                                  fontSize: `${9 * 0.9 * curScale}px`,
+                                  lineHeight: 1.1,
+                                  fontFamily:
+                                    "'Sarabun', 'THSarabunNew', -apple-system, sans-serif",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {item.dateText}
+                              </div>
+                            )}
+                          </div>
                         ) : sigData && sigData.loading ? (
                           <div className="p-2 bg-emerald-50/90 border border-emerald-400 rounded flex items-center gap-1.5 text-xs text-emerald-800 shadow">
                             <Spin size="small" />
