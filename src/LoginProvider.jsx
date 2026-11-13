@@ -8,6 +8,7 @@ export const LoginProvider = ({ children }) => {
     name: "",
     level: [0],
     advice: "",
+    sigId: "",
   });
   const setLoginHandler = (objLogin) => {
     setIsLogin(objLogin);

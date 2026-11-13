@@ -175,13 +175,14 @@ const chkLogin = ({ username, password }) => {
   let objData = {};
   let arrLog = [username];
   if (foundUser) {
-    const arrUser = sheet.getRange(foundUser.getRow(), 6, 1, 5).getValues();
+    const arrUser = sheet.getRange(foundUser.getRow(), 6, 1, 7).getValues();
     if (arrUser[0][2] === password) {
       objData.isLogin = true;
       objData.user = arrUser[0][1];
       objData.name = arrUser[0][0];
       objData.level = arrUser[0][3].split(",");
       objData.advice = arrUser[0][4];
+      objData.sigId = arrUser[0][6];
       arrLog.push("ผ่าน");
     } else {
       objData.isLogin = false;
@@ -1021,6 +1022,7 @@ const uploadFileBook = (arrFiles, data) => {
   const folder = DriveApp.getFolderById(folderId);
   let arrFileId = [];
   let arrFileUrl = [];
+  let arrFileName = [];
   arrFiles.forEach((file, i) => {
     const contentType = file.base64.substring(5, file.base64.indexOf(";"));
     const bytes = Utilities.base64Decode(
@@ -1035,6 +1037,7 @@ const uploadFileBook = (arrFiles, data) => {
     const upFile = folder.createFile(blob);
     arrFileId.push(upFile.getId());
     arrFileUrl.push(upFile.getUrl());
+    arrFileName.push(upFile.getName());
   });
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
     arrShName[bookType],
@@ -1055,9 +1058,18 @@ const uploadFileBook = (arrFiles, data) => {
       ...JSON.parse(sheet.getRange(bookRow, 10).getValue() || "[]"),
       ...arrFileUrl,
     ];
+    arrFileName = [
+      ...JSON.parse(sheet.getRange(bookRow, 12).getValue() || "[]"),
+      ...arrFileName,
+    ];
     sheet.getRange(bookRow, 9).setValue(JSON.stringify(arrFileId));
     sheet.getRange(bookRow, 10).setValue(JSON.stringify(arrFileUrl));
-    return JSON.stringify({ upFileId: arrFileId, upFileUrl: arrFileUrl });
+    sheet.getRange(bookRow, 12).setValue(JSON.stringify(arrFileName));
+    return JSON.stringify({
+      upFileId: arrFileId,
+      upFileUrl: arrFileUrl,
+      upFileName: arrFileName,
+    });
   } else {
     throw new Error("ไม่พบข้อมูลหนังสือที่ต้องการอัปโหลดไฟล์");
   }
@@ -1089,3 +1101,36 @@ const delBook = (bookType, id) => {
   }
 };
 //-------------------End Saraban Section--------------------
+//-------------------Upload Signature Section--------------------
+const uploadSignature = (data) => {
+  const { user, filename, base64 } = data;
+  const folderId = "1QAw8ZPMqqiKvuuJuLMA1dnE-WQkkM5tL"; // Replace with your folder ID
+  const folder = DriveApp.getFolderById(folderId);
+  Logger.log(`Uploading signature for user: ${user}, filename: ${filename}`);
+  Logger.log(`Base64 data: ${base64}`);
+
+  const contentType = base64.substring(5, base64.indexOf(";"));
+  const bytes = Utilities.base64Decode(
+    base64.substr(base64.indexOf("base64,") + 7),
+  );
+  const blob = Utilities.newBlob(bytes, contentType, `${user}-${filename}`);
+
+  const upFile = folder.createFile(blob);
+  const upFileId = upFile.getId();
+  const upFileUrl = upFile.getUrl();
+  Logger.log(`Uploaded file ID: ${upFileId}, URL: ${upFileUrl}`);
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("user");
+  const lastRow = sheet.getLastRow();
+  for (let row = 2; row <= lastRow; row++) {
+    const cellValue = sheet.getRange(row, 7).getValue();
+    if (cellValue === user) {
+      sheet.getRange(row, 12).setValue(upFileId);
+      break; // Exit the loop once the user is found and updated
+    }
+  }
+
+  return JSON.stringify({ fileId: upFileId, fileUrl: upFileUrl });
+};
+
+//-------------------End Upload Signature Section--------------------

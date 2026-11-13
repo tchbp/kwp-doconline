@@ -320,17 +320,21 @@ const TableBookList = ({
                 <Popover
                   content={
                     <div>
-                      {JSON.parse(record.fileurl).map((url) => (
-                        <Button
-                          key={url}
-                          onClick={() => {
-                            window.open(url, "_blank");
-                            //console.log(url);
-                          }}
-                          variant="solid"
-                          color="primary"
-                          icon={<FileOutlined />} // ถ้าไม่มี icon ให้หยุดการทำงาน
-                        />
+                      {JSON.parse(record.fileurl).map((url, i) => (
+                        <Tooltip
+                          title={`เปิดไฟล์ ${JSON.parse(record.filename)[i] || " (ไม่ได้ระบุชื่อไฟล์) "}`}
+                        >
+                          <Button
+                            key={i}
+                            onClick={() => {
+                              window.open(url, "_blank");
+                              //console.log(url);
+                            }}
+                            variant="solid"
+                            color="primary"
+                            icon={<FileOutlined />} // ถ้าไม่มี icon ให้หยุดการทำงาน
+                          />
+                        </Tooltip>
                       ))}
                     </div>
                   }

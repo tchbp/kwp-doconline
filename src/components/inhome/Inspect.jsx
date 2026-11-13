@@ -28,6 +28,7 @@ import { callGas } from "@/utils/gasApi";
 import Highlighter from "react-highlight-words";
 import Spin2Wait from "@/components/Spin2Wait";
 import CommentJob from "@/components/inhome/CommentJob";
+import PdfEditorModal from "@/components/PdfEditorModal";
 
 const Inspect = () => {
   const contextObj = useContext(LoginContext);
@@ -36,6 +37,7 @@ const Inspect = () => {
   const [jobList, setJobList] = useState([]);
   // **************************** constant to comment ********************
   const user2comm = contextObj.dataLogin.user;
+  const userLevel = contextObj.dataLogin.level;
   const pos = () => {
     const [level] = contextObj.dataLogin.level;
     console.log(`level is ${level}`);
@@ -44,6 +46,19 @@ const Inspect = () => {
     } else {
       return 2;
     }
+  };
+  const sigId = contextObj.dataLogin.sigId;
+
+  const [pdfModalVisible, setPdfModalVisible] = useState(false);
+  const [pdfId, setPdfId] = useState(null);
+  const [typeJob, setTypeJob] = useState(null);
+  const [memo, setMemo] = useState(null);
+
+  const handleFileCheck = (fileid, typeJob, memo) => {
+    setPdfId(fileid);
+    setTypeJob(typeJob);
+    setMemo(memo);
+    setPdfModalVisible(true);
   };
 
   const handleCommentClick = (fileid, comm, commD, memo) => {
@@ -95,7 +110,6 @@ const Inspect = () => {
     };
     callGas("getTeacher")
       .then((data) => {
-        
         callGas("getJob2Inspect", dataJob)
           .then((data2) => {
             //-- setTeacherList
@@ -358,6 +372,16 @@ const Inspect = () => {
           />
           {record.status !== "ส่งเรียบร้อย" && (
             <Space.Compact block>
+              <Tooltip title="ตรวจไฟล์ PDF">
+                <Button
+                  variant="solid"
+                  color="red"
+                  icon={<FileOutlined />}
+                  onClick={() => {
+                    handleFileCheck(record.fileid, record.typeJob, record.memo);
+                  }}
+                />
+              </Tooltip>
               <Tooltip title="ความคิดเห็นของผู้ตรวจ/ผู้อำนวยการ">
                 <Button
                   variant="solid"
@@ -478,6 +502,22 @@ const Inspect = () => {
           <Spin2Wait onSpin={onSpin} message={"กำลังดึงข้อมูลโปรดรอซักครู่"} />
         </Space>
       </Card>
+      <PdfEditorModal
+        key={pdfId} // ★ remount เมื่อเปลี่ยนไฟล์
+        open={pdfModalVisible}
+        pdfId={pdfId}
+        sigId={sigId}
+        mode="signature" // เปิดมาโหมดลายเซ็นเลย
+        onClose={() => setPdfModalVisible(false)}
+        onSaved={(res) => {
+          // res จาก overwritePdf
+          //setPdfModalVisible(false);
+          //reload();
+        }}
+        typeJob={typeJob}
+        memo={memo}
+        stamp={userLevel.includes("1") || userLevel.includes("22")}
+      />
     </>
   );
 };
