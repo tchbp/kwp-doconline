@@ -1101,3 +1101,36 @@ const delBook = (bookType, id) => {
   }
 };
 //-------------------End Saraban Section--------------------
+//-------------------Upload Signature Section--------------------
+const uploadSignature = (data) => {
+  const { user, filename, base64 } = data;
+  const folderId = "1QAw8ZPMqqiKvuuJuLMA1dnE-WQkkM5tL"; // Replace with your folder ID
+  const folder = DriveApp.getFolderById(folderId);
+  Logger.log(`Uploading signature for user: ${user}, filename: ${filename}`);
+  Logger.log(`Base64 data: ${base64}`);
+
+  const contentType = base64.substring(5, base64.indexOf(";"));
+  const bytes = Utilities.base64Decode(
+    base64.substr(base64.indexOf("base64,") + 7),
+  );
+  const blob = Utilities.newBlob(bytes, contentType, `${user}-${filename}`);
+
+  const upFile = folder.createFile(blob);
+  const upFileId = upFile.getId();
+  const upFileUrl = upFile.getUrl();
+  Logger.log(`Uploaded file ID: ${upFileId}, URL: ${upFileUrl}`);
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("user");
+  const lastRow = sheet.getLastRow();
+  for (let row = 2; row <= lastRow; row++) {
+    const cellValue = sheet.getRange(row, 7).getValue();
+    if (cellValue === user) {
+      sheet.getRange(row, 12).setValue(upFileId);
+      break; // Exit the loop once the user is found and updated
+    }
+  }
+
+  return JSON.stringify({ fileId: upFileId, fileUrl: upFileUrl });
+};
+
+//-------------------End Upload Signature Section--------------------

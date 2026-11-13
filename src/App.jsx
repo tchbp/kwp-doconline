@@ -21,6 +21,7 @@ import {
   Modal,
 } from "antd";
 import Home from "./pages/Home";
+import UpSignModal from "@/components/doccommand/UpSign";
 
 import { UserOutlined } from "@ant-design/icons";
 import LoginContext from "@/LoginProvider";
@@ -39,6 +40,7 @@ const App = () => {
   }));
 
   const [chPasswdShow, setChPasswdShow] = useState(false);
+  const [upSignShow, setUpSignShow] = useState(false);
   const itemsMenu = [
     {
       label: "ลงชื่อออก",
@@ -47,6 +49,10 @@ const App = () => {
     {
       label: "เปลี่ยนรหัสผ่าน",
       key: "1",
+    },
+    {
+      label: "Upload ลายเซ็น",
+      key: "2",
     },
   ];
   const logOut = () => {
@@ -65,6 +71,10 @@ const App = () => {
         break;
       case "1":
         setChPasswdShow(true);
+        break;
+      case "2":
+        setUpSignShow(true);
+        break;
     }
   };
 
@@ -197,6 +207,11 @@ const App = () => {
       >
         <ChangePassword onHide={() => setChPasswdShow(false)} />
       </Modal>
+      <UpSignModal
+        user={contextObj.dataLogin.user}
+        showUpSign={upSignShow}
+        closeUpSign={() => setUpSignShow(false)}
+      />
     </>
   );
 };
